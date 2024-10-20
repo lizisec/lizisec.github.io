@@ -3,7 +3,7 @@
 ~~~
 sudo -l
 ~~~
-查看bash版本，bash版本小于4.2和4.4[[bash巧用提权]]
+查看bash版本，bash版本小于4.2和4.4
 ~~~
 bash --version
 ~~~
