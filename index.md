@@ -10,5 +10,6 @@ layout: default
 ## [IMF(hard)](./IMF)
 ## [Breach2.1(hard)](./breach2.1/)
 ## [Ted(hard)](./Ted/)
+## [WinterMute(hard)](./WinterMute/)
 # HTB
 ## [blurry(medium)](./blurry)
