@@ -106,10 +106,26 @@ Nmap done: 1 IP address (1 host up) scanned in 16.42 seconds
 脚本扫描的时候发现了域名blurry.htb
 进行一下子域名枚举
 ~~~
-┌──(kali㉿kali)-[~/blurry]                                                         └─$ wfuzz -c -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u http://blurry.htb -H "Host: FUZZ.blurry.htb" --hh 169                                                                   
-********************************************************                           * Wfuzz 3.1.0 - The Web Fuzzer                         *                           ********************************************************                           Target: http://blurry.htb/                                                         Total requests: 4989                                                               =====================================================================              ID           Response   Lines    Word       Chars       Payload                    =====================================================================
+┌──(kali㉿kali)-[~/blurry]
+└─$ wfuzz -c -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -u http://blurry.htb -H "Host: FUZZ.blurry.htb" --hh 169
 
-000000051:   400        0 L      4 W        280 Ch      "api"                      000000070:   200        448 L    12829 W    218733 Ch   "chat"                     000000111:   200        28 L     363 W      13327 Ch    "app"                      000000096:   200        0 L      1 W        2 Ch        "files"                    Total time: 0
+********************************************************
+* Wfuzz 3.1.0 - The Web Fuzzer                         *
+********************************************************
+
+Target: http://blurry.htb/
+Total requests: 4989
+
+=====================================================================
+ ID           Response   Lines    Words     Chars       Payload                    
+=====================================================================
+
+000000051:   400        0 L      4 W        280 Ch      "api"                      
+000000070:   200        448 L    12829 W    218733 Ch   "chat"                     
+000000111:   200        28 L     363 W      13327 Ch    "app"                      
+000000096:   200        0 L      1 W        2 Ch        "files"                    
+
+Total time: 0
 Processed Requests: 4989
 Filtered Requests: 4985
 Requests/sec.: 0
@@ -133,16 +149,24 @@ ff02::2         ip6-allrouters
 ~~~
 ### http://api.blurry.htb
 似乎是一个托管ai模型的平台，暂时搁置
+
 ![Branching](image/clearml.png)
+
 ### http://files.blurry.htb/
 只有一个OK
+
 ![Branching](image/files.png)
+
 ### http://api.blurry.htb/
 api不知道是干什么用的
+
 ![Branching](image/json.png)
+
 ### http://chat.blurry.htb
 似乎是一个在线聊天室，注册个账号登进去
+
 ![Branching](image/version.png)
+
 可以得到几个用户名，并且jippity是管理员
 搜索了一下chat.rocket的漏洞利用脚本，需要管理员的邮箱，而我们现在没有，先回去看看有没有其他的信息
 这里可以查到clearML的版本为1.13.1
