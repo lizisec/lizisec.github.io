@@ -1,6 +1,7 @@
 ---
 layout: default
 ---
+# WinterMute(vulnhub-hard)
 
 # 环境搭建
 这是一台练习pivoting的机器，首先先配置网络
