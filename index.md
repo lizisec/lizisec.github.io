@@ -7,7 +7,8 @@ layout: default
 ### 仅供参考
 
 # vulnhub
-## [IMF(vulnhub-hard)](./IMF)
-## [Breach2.1](./breach2.1/)
+## [IMF(hard)](./IMF)
+## [Breach2.1(hard)](./breach2.1/)
+## [Ted(hard)](./Ted/)
 # HTB
 ## [blurry(medium)](./blurry)
