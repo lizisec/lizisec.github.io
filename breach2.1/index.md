@@ -179,6 +179,7 @@ Nmap done: 1 IP address (1 host up) scanned in 7.47 seconds
 ![Branching](Pasted image 20241028182619.png)
 
 只发现了我们自己注册的账户
+
 看来要去看看另外一个数据库
 #### oscommerce
 
@@ -189,6 +190,7 @@ Nmap done: 1 IP address (1 host up) scanned in 7.47 seconds
 ![Branching](Pasted image 20241028182915.png)
 
 拿到admin的密码hash
+
 看起来像是md5，先鉴别一下
 
 ![Branching](Pasted image 20241028182951.png)
@@ -211,7 +213,9 @@ Nmap done: 1 IP address (1 host up) scanned in 7.47 seconds
 ![Branching](Pasted image 20241028192452.png)
 
 尝试了本地用户提权，但是就算拿到admin登录blog好像也没什么用
+
 只能尝试xss了
+
 结合主页面给的beef
 
 ![Branching](Pasted image 20241028192616.png)
@@ -233,6 +237,7 @@ Nmap done: 1 IP address (1 host up) scanned in 7.47 seconds
 ![Branching](Pasted image 20241028201427.png)
 
 可以发现左侧靶机的ip上线
+
 发现了一篇精彩的[文章](https://phreaklets.blogspot.com/2014/04/using-beef-metasploit-to-pop-shell-with.html)，展示了利用msf+beef进行反弹shell
 但是这里我的BeEF迟迟收不到上线的消息，所以干脆在register.html中注入我的payload
 
@@ -245,6 +250,7 @@ Nmap done: 1 IP address (1 host up) scanned in 7.47 seconds
 ![Branching](Pasted image 20241029144332.png)
 
 成功拿到shell，这里要去想一下我们的ssh连接为什么会被关闭
+
 在/etc/ssh/sshd_config文件中发现
 ~~~
 UsePAM yes
@@ -270,12 +276,15 @@ export TERM=xterm
 ![Branching](Pasted image 20241029152649.png)
 
 似乎用处不大，暂时保留
+
 sudo -l
 
 ![Branching](Pasted image 20241029192057.png)
 
 没有修改配置文件和设置LD_PRELOAD的权限
+
 靠apache2提权只能暂时搁置
+
 cat /etc/passwd
 
 ![Branching](Pasted image 20241029192306.png)
