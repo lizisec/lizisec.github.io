@@ -460,7 +460,9 @@ socat -ddd TCP-LISTEN:5555,fork TCP:192.168.56.101:4444 &> /dev/null &
 >!Xx3JanexX!<
 ~~~
 ssh连接
+
 ![Branching](Pasted image 20241106162102.png)
+
 一番枚举后没发现什么信息，回过头看看
 
 ![Branching](Pasted image 20241106164420.png)
