@@ -162,12 +162,13 @@ pre {
   background: rgba(0, 0, 0, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.15);
   padding: 10px;
-  font-size: 16px;
+  font-size: 20px;
   color: #b5e853;
   border-radius: 2px;
   word-wrap: normal;
   overflow: auto;
   overflow-y: hidden;
+  font-family: Consolas, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
 }
 
 code.highlighter-rouge {
@@ -213,7 +214,7 @@ hr {
   border-bottom: 2px solid rgba(0, 0, 0, 0.7);
   border-top: 2px solid rgba(0, 0, 0, 1);
   color: rgba(255, 255, 255, 0.8);
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: Consolas, Arial, sans-serif;
   font-weight: bold;
   font-size: 13px;
   text-decoration: none;
