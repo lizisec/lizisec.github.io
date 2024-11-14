@@ -20,6 +20,7 @@ body {
   color: $body-foreground;
   font-size: 16px;
   line-height: 1.5;
+  color: #b5e853;
   font-family: 'Consolas', Consolas, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
 }
 
@@ -164,7 +165,7 @@ pre {
   padding: 10px;
   font-size: 20px;
   color: #b5e853;
-  border-radius: 2px;
+  border-radius: 20px;
   word-wrap: normal;
   overflow: auto;
   overflow-y: hidden;
