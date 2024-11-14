@@ -12,4 +12,6 @@ layout: default
 ## [Ted(hard)](./Ted/)
 ## [WinterMute(hard)](./WinterMute/)
 # HTB
-## [blurry(medium)](./blurry)
+## [Bastard(windows-medium)](./Bastard/)
+## [blurry(linux-medium)](./blurry)
+
