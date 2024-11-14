@@ -21,7 +21,8 @@ body {
   font-size: 16px;
   line-height: 1.5;
   color: #b5e853;
-  font-family: 'Consolas', Consolas, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  font-family: Consolas, 'Courier New', Courier, 'Microsoft YaHei', SimSun, monospace;
+
 }
 
 /* General & 'Reset' Stuff */
@@ -169,7 +170,9 @@ pre {
   word-wrap: normal;
   overflow: auto;
   overflow-y: hidden;
-  font-family: Consolas, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+  //font-family: 'Courier New', Courier, monospace;  /* 设置为 Courier New */
+  
+
 }
 
 code.highlighter-rouge {
@@ -179,6 +182,7 @@ code.highlighter-rouge {
   margin: 0px -3px;
   color: #aa759f;
   border-radius: 2px;
+  font-family: Consolas, 'Courier New', Courier, monospace;  /* 设置为 Consolas */
 }
 
 table {
