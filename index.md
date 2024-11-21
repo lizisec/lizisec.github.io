@@ -11,6 +11,7 @@ layout: default
 ## [Breach2.1(hard)](./breach2.1/)
 ## [Ted(hard)](./Ted/)
 ## [WinterMute(hard)](./WinterMute/)
+## [INSANITY(hard)](./INSANITY/)
 # HTB
 ## [Bastard(windows-medium)](./Bastard/)
 ## [blurry(linux-medium)](./blurry)
