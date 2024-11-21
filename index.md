@@ -14,4 +14,4 @@ layout: default
 # HTB
 ## [Bastard(windows-medium)](./Bastard/)
 ## [blurry(linux-medium)](./blurry)
-
+## [Crafty(windows-easy)](./Crafty/)
