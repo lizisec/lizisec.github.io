@@ -254,7 +254,7 @@ Connection closed by foreign host.
 给了一个凯撒密码rkfpuzrahngvat
 解密出exschmenuating
 ## 80端口(web)
-![](./image/Pasted image 20241026182956.png)
+![](./Pasted image 20241026182956.png)
 看起来billy的服务器被入侵了
 查看源码也没有发现有用的信息
 没什么信息就进行目录爆破吧！
@@ -289,7 +289,7 @@ Finished
 只扫出来一个manual
 访问发现是默认页
 试试23端口解密出的exschmenuating
-![](./image/Pasted image 20241026190355.png) I put "veronica" somewhere in the file name because I bet you a million dollars she uses her name as part of her passwords
+![](./Pasted image 20241026190355.png) I put "veronica" somewhere in the file name because I bet you a million dollars she uses her name as part of her passwords
 看起来需要构造字典
 可以先试试利用已有的字典
 ~~~
@@ -342,7 +342,7 @@ https://www.youtube.com/watch?v=z5YU7JwVy7s
 QUIT                                                                            
 ~~~
 可疑的视频链接https://www.youtube.com/watch?v=z5YU7JwVy7s
-![](./image/Pasted image 20241026214909.png)
+![](./Pasted image 20241026214909.png)
 得到爆出的数字，可能是knock的端口号
 1066,1215,1466,1467,1469,1514,1981,1986
 ~~~mail2                                                                  

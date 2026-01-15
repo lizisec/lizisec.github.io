@@ -136,20 +136,20 @@ ff02::2         ip6-allrouters
 ~~~
 ### http://api.blurry.htb
 似乎是一个托管ai模型的平台，暂时搁置
-![](./image/Pasted image 20241111150144.png)
+![](./Pasted image 20241111150144.png)
 ### http://files.blurry.htb/
 只有一个OK
-![](./image/Pasted image 20241111150325.png)
+![](./Pasted image 20241111150325.png)
 ### http://api.blurry.htb/
 api不知道是干什么用的
-![](./image/Pasted image 20241111150429.png)
+![](./Pasted image 20241111150429.png)
 ### http://chat.blurry.htb
 似乎是一个在线聊天室，注册个账号登进去
-![](./image/Pasted image 20241111150446.png)
+![](./Pasted image 20241111150446.png)
 可以得到几个用户名，并且jippity是管理员
 搜索了一下chat.rocket的漏洞利用脚本，需要管理员的邮箱，而我们现在没有，先回去看看有没有其他的信息
 这里可以查到clearML的版本为1.13.1
-![](./image/Pasted image 20241111163003.png)
+![](./Pasted image 20241111163003.png)
 寻找nday，发现有rce可以利用，[网址](https://github.com/junnythemarksman/CVE-2024-24590?tab=readme-ov-file)
 ~~~
 ┌──(venv)─(kali㉿kali)-[~/blurry/venv]

