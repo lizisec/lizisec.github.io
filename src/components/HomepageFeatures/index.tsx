@@ -11,32 +11,29 @@ type FeatureItem = {
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Easy to Use',
+    title: 'HackTheBox',
     Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        HackTheBox 靶机的渗透测试笔记，包含详细的攻击步骤和技术分析。
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
+    title: 'VulnHub',
     Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        VulnHub 靶机的完整 Walkthrough，记录从信息收集到权限提升的全过程。
       </>
     ),
   },
   {
-    title: 'Powered by React',
+    title: '持续更新',
     Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        不断学习新的渗透测试技术，持续更新笔记内容。
       </>
     ),
   },
