@@ -428,16 +428,16 @@ Finished
 └─$ echo "YWxsdGhlZmlsZXM=" | base64 -d
 allthefiles 
 ~~~
-解密得到flag1{allthefiles}
+解密得到 flag1\{allthefiles\}
 ![](./image/Pasted image 20241030135258.png)
 这里的文件名看起来似乎也是base64
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ echo "ZmxhZzJ7YVcxbVlXUnRhVzVwYzNSeVlYUnZjZz09fQ==" | base64 -d  
 
-flag2{aW1mYWRtaW5pc3RyYXRvcg==} 
+flag2\{aW1mYWRtaW5pc3RyYXRvcg==\}
 ~~~
-得到`flag2{aW1mYWRtaW5pc3RyYXRvcg==} `
+得到 `flag2{aW1mYWRtaW5pc3RyYXRvcg==}`
 再解密得到
 ~~~
 ┌──(kali㉿kali)-[~/imf]
@@ -482,7 +482,7 @@ Finished
 传入一个数组居然就绕过了
 ![](./image/Pasted image 20241030151118.png)
 ![](./image/Pasted image 20241030151238.png)
-解密得到flag3{continueTOcms}
+解密得到 flag3\{continueTOcms\}
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ echo "Y29udGludWVUT2Ntcw==" | base64 -d    
@@ -666,10 +666,10 @@ PS C:\Users\lizis\Desktop\python>
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ zbarimg whiteboard.jpg 
-QR-Code:flag4{dXBsb2Fkcjk0Mi5waHA=}
+QR-Code:flag4\{dXBsb2Fkcjk0Mi5waHA=\}
 scanned 1 barcode symbols from 1 images in 0.04 seconds
 ~~~
-解码一下~flag4{uploadr942.php}
+解码一下~ flag4\{uploadr942.php\}
 似乎可以上传文件捏
 ![](./image/Pasted image 20241030203546.png)
 构造一个简单的木马
@@ -795,7 +795,7 @@ ls
 3875fd0c344b.gif  flag5_abc123def.txt
 www-data@imf:/var/www/html/imfadministrator/uploads$ cat flag5_abc123def.txt
 cat flag5_abc123def.txt
-flag5{YWdlbnRzZXJ2aWNlcw==}
+flag5\{YWdlbnRzZXJ2aWNlcw==\}
 ~~~
 我们得到了第五个flag
 ~~~
@@ -803,7 +803,7 @@ flag5{YWdlbnRzZXJ2aWNlcw==}
 └─$ echo "YWdlbnRzZXJ2aWNlcw==" | base64 -d
 agentservices  
 ~~~
-flag5{agentservices}
+flag5\{agentservices\}
 搜索一下web的信息
 ~~~
 www-data@imf:/var/www/html/imfadministrator$ cat cms.php
@@ -905,7 +905,7 @@ www-data@imf:/tmp$ ./45010
 whoami
 root
 ~~~
-定妆照flag6{Gh0stProt0c0ls}
+定妆照 flag6\{Gh0stProt0c0ls\}
 ![](./image/Pasted image 20241102214253.png)
 
 
