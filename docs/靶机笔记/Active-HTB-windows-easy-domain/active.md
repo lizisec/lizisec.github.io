@@ -4,9 +4,11 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
 
-## 全端口扫描
+### 端口扫描
+
+#### 全端口扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/active]                                                                                                                                                                                                                                                                                                
@@ -45,7 +47,7 @@ Nmap done: 1 IP address (1 host up) scanned in 33.99 seconds
 
 ~~~
 
-## 默认脚本扫描
+#### 默认脚本扫描
 
 ~~~
                                                                                                                                                              
@@ -99,7 +101,7 @@ Nmap done: 1 IP address (1 host up) scanned in 73.84 seconds
 
 ~~~
 
-## 漏洞脚本扫描
+#### 漏洞脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/active]
@@ -151,7 +153,9 @@ Nmap done: 1 IP address (1 host up) scanned in 196.71 seconds
                                                                               
 ~~~
 
-# 445(SMB)
+### SMB 枚举 (445端口)
+
+#### 匿名访问枚举
 ~~~
 ┌──(kali㉿kali)-[~/active]
 └─$ smbmap -H 10.10.10.100
@@ -183,6 +187,8 @@ SMBMap - Samba Share Enumerator v1.10.5 | Shawn Evans - ShawnDEvans@gmail.com
 [*] Closed 1 connections    
 ~~~
 
+#### 发现 GPP 凭据
+
 发现xml文件中有保存的凭据
 
 ~~~
@@ -194,6 +200,8 @@ SMBMap - Samba Share Enumerator v1.10.5 | Shawn Evans - ShawnDEvans@gmail.com
                  
 ~~~
 
+#### 解密 GPP 密码
+
 使用gpp-decrypt进行解密
 
 ~~~
@@ -202,6 +210,8 @@ SMBMap - Samba Share Enumerator v1.10.5 | Shawn Evans - ShawnDEvans@gmail.com
 GPPstillStandingStrong2k18
 
 ~~~
+
+#### 凭据验证
 
 得到一组凭据
 `SVC_TGS::GPPstillStandingStrong2k18`
@@ -226,6 +236,8 @@ LDAP        10.10.10.100    389    DC               [+] active.htb\SVC_TGS:GPPst
 └─$ 
 
 ~~~
+
+#### 使用凭据访问 SMB
 
 使用这组凭据访问smb共享
 
@@ -261,6 +273,8 @@ SMBMap - Samba Share Enumerator v1.10.5 | Shawn Evans - ShawnDEvans@gmail.com
                                                                                          
 ~~~
 
+#### BloodHound 信息收集
+
 利用bloodhound进行信息搜集，没找到提权的路径
 
 ~~~
@@ -283,6 +297,12 @@ INFO: Done in 00M 09S
 INFO: Compressing output into 20241229093707_bloodhound.zip
 
 ~~~
+
+## 权限提升
+
+### Kerberoasting 攻击
+
+#### 时间同步
 
 同步时间进行kerberoast
 
@@ -318,6 +338,8 @@ $krb5tgs$23$*Administrator$ACTIVE.HTB$active.htb/Administrator*$516761476aec161a
 
 ~~~
 
+#### 破解 TGS 票据
+
 破解出密码
 
 ~~~
@@ -333,6 +355,10 @@ Use the "--show" option to display all of the cracked passwords reliably
 Session completed. 
 
 ~~~
+
+### 获取管理员权限
+
+#### 使用 WMIExec 登录
 
 利用wmiexec进行登录
 

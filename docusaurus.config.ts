@@ -125,6 +125,11 @@ const config: Config = {
       darkTheme: prismThemes.dracula,
       additionalLanguages: ['bash', 'python', 'java', 'javascript', 'typescript', 'json', 'yaml', 'markdown'],
     },
+    // 配置右侧目录显示的标题层级
+    tableOfContents: {
+      minHeadingLevel: 2,
+      maxHeadingLevel: 4,
+    },
     // 搜索配置（可选，需要配置 Algolia）
     // algolia: {
     //   appId: 'YOUR_APP_ID',
