@@ -38,8 +38,9 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          // 如果需要"编辑此页"链接，请取消注释并更新 URL
-          // editUrl: 'https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/tree/main/',
+          editUrl: 'https://github.com/lizisec/lizisec.github.io/tree/main/',
+          showLastUpdateTime: true,
+          showLastUpdateAuthor: true,
         },
         blog: {
           showReadingTime: true,
@@ -47,11 +48,12 @@ const config: Config = {
             type: ['rss', 'atom'],
             xslt: true,
           },
-          // 如果需要"编辑此页"链接，请取消注释并更新 URL
-          // editUrl: 'https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME/tree/main/',
-          onInlineTags: 'warn',
-          onInlineAuthors: 'warn',
-          onUntruncatedBlogPosts: 'warn',
+          editUrl: 'https://github.com/lizisec/lizisec.github.io/tree/main/',
+          blogTitle: '博客',
+          blogDescription: '学习笔记与技术分享',
+          postsPerPage: 10,
+          blogSidebarTitle: '最近文章',
+          blogSidebarCount: 'ALL',
         },
         theme: {
           customCss: './src/css/custom.css',
@@ -91,51 +93,42 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: '文档',
           items: [
             {
-              label: 'Tutorial',
+              label: '开始阅读',
               to: '/docs/intro',
             },
           ],
         },
         {
-          title: 'Community',
+          title: '更多',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
-            },
-          ],
-        },
-        {
-          title: 'More',
-          items: [
-            {
-              label: 'Blog',
+              label: '博客',
               to: '/blog',
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/lizisec/lizisec.github.io',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} lizisec. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      additionalLanguages: ['bash', 'python', 'java', 'javascript', 'typescript', 'json', 'yaml', 'markdown'],
     },
+    // 搜索配置（可选，需要配置 Algolia）
+    // algolia: {
+    //   appId: 'YOUR_APP_ID',
+    //   apiKey: 'YOUR_SEARCH_API_KEY',
+    //   indexName: 'YOUR_INDEX_NAME',
+    // },
+  },
   } satisfies Preset.ThemeConfig,
 };
 
