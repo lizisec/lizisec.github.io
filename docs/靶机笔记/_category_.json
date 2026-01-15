@@ -1,0 +1,8 @@
+{
+  "label": "靶机笔记",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "HackTheBox 和 VulnHub 靶机的渗透测试笔记"
+  }
+}
