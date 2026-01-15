@@ -128,7 +128,6 @@ const config: Config = {
     //   apiKey: 'YOUR_SEARCH_API_KEY',
     //   indexName: 'YOUR_INDEX_NAME',
     // },
-  },
   } satisfies Preset.ThemeConfig,
 };
 
