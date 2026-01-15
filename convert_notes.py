@@ -129,10 +129,21 @@ def process_notes():
                 title = dir_name.split('(')[0].strip()
                 frontmatter = f"""---
 title: {title}
+pagination_prev: null
+pagination_next: null
 ---
 
 """
                 converted_content = frontmatter + converted_content
+            elif 'pagination_prev' not in converted_content:
+                # 如果已有 frontmatter 但没有 pagination 设置，添加它
+                lines = converted_content.split('\n')
+                if lines[0] == '---':
+                    # 找到第二个 ---
+                    end_idx = lines[1:].index('---') + 1
+                    lines.insert(end_idx, 'pagination_prev: null')
+                    lines.insert(end_idx + 1, 'pagination_next: null')
+                    converted_content = '\n'.join(lines)
             
             # 写入目标文件
             target_md = target_subdir / md_file.name

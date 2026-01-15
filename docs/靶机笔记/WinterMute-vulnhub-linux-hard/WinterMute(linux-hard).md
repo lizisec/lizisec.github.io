@@ -1,5 +1,7 @@
 ---
 title: WinterMute
+pagination_prev: null
+pagination_next: null
 ---
 
 # 环境搭建

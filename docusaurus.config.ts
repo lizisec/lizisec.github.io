@@ -41,6 +41,9 @@ const config: Config = {
           editUrl: 'https://github.com/lizisec/lizisec.github.io/tree/main/',
           showLastUpdateTime: true,
           showLastUpdateAuthor: true,
+          // 禁用文档底部的上一页/下一页导航
+          // 因为每个靶机笔记都是独立的，不需要顺序导航
+          breadcrumbs: true,
         },
         blog: {
           showReadingTime: true,

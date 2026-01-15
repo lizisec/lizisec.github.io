@@ -1,5 +1,7 @@
 ---
 title: streamIO
+pagination_prev: null
+pagination_next: null
 ---
 
 靶机为HTB的域渗透靶机StreamIO

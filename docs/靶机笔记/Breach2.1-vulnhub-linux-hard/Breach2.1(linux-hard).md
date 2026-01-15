@@ -1,5 +1,7 @@
 ---
 title: Breach2.1
+pagination_prev: null
+pagination_next: null
 ---
 
 - 靶机链接:https://www.vulnhub.com/entry/breach-21,159/

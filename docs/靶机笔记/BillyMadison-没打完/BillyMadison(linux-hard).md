@@ -1,5 +1,7 @@
 ---
 title: BillyMadison
+pagination_prev: null
+pagination_next: null
 ---
 
 - 下载地址-https://www.vulnhub.com/entry/billy-madison-11,161/
