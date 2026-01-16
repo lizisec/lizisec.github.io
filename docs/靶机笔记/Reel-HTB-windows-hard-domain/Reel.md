@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ## 全端口扫描
 
 ~~~
@@ -189,7 +191,7 @@ Nmap done: 1 IP address (1 host up) scanned in 68.19 seconds
 
 ~~~
 
-# 21(FTP)
+### FTP 信息收集
 允许匿名登陆，下载下三个文件
 
 ~~~
@@ -305,7 +307,9 @@ App Version                     : 14.0000
 
 ~~~
 
-# 25(SMTP)
+## 漏洞利用
+
+### SMTP 钓鱼攻击 (CVE-2017-0199)
 尝试向nico发送rtf文件，在CVE-2017-0199中，rtf可能能造成RCE
 找到一个利用项目
 https://github.com/Exploit-install/CVE-2017-0199
@@ -480,6 +484,10 @@ tom@REEL C:\Users\tom>
 
 ~~~
 
+## 权限提升
+
+### BloodHound 分析与 ACL 提权
+
 找到一个可疑的acls.csv
 ~~~
 PS C:\Users\tom\Desktop\AD Audit\BloodHound\Ingestors> ls                                                            
@@ -498,17 +506,17 @@ Mode                LastWriteTime     Length Name
 ~~~
 
 像是bloodhound导出的结果，查阅资料发现bloodhound的新版本已经不再支持导入csv文件，所以下载旧版本
-![](Pasted%20image%2020250128134158.png)
+![](Pasted_image_20250128134158.png)
 
 在2.0之前在最新版本是1.5.2
 https://github.com/SpecterOps/BloodHound-Legacy/releases?page=3
 这里一直构建不成功，直接从csv分析吧
 
-![](Pasted%20image%2020250128150259.png)
+![](Pasted_image_20250128150259.png)
 
 tom对claire有writeowner权限
 
-![](Pasted%20image%2020250128150602.png)
+![](Pasted_image_20250128150602.png)
 
 claire对backup_admins有writeDacl权限
 

@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 
 全端口扫描
 ~~~
@@ -167,9 +169,9 @@ Nmap done: 1 IP address (1 host up) scanned in 360.70 seconds
 
 ~~~
 
-# 80(WEB)
+### Web 信息收集
 看起来就是简单的静态页面，但是有出现职工的名字，进行一下搜集
-![](Pasted%20image%2020250114134922.png)
+![](Pasted_image_20250114134922.png)
 
 ~~~
 Johnson
@@ -224,6 +226,10 @@ Version: v1.0.3 (9dad6e1) - 01/14/25 - Ronnie Flathers @ropnop
 2025/01/14 01:58:09 >  Done! Tested 104 usernames (1 valid) in 1.033 seconds
 
 ~~~
+
+## 漏洞利用
+
+### AS-REP Roasting
 
 通过用户名尝试获取无密码认证的TGT
 
@@ -343,13 +349,17 @@ INFO: Compressing output into 20250114023844_bloodhound.zip
 
 ~~~
 
+## 权限提升
+
+### DCSync 提权
+
 发现SVC_LOANMGR这个用户拥有DCSync的可能性，尝试横向移动到这个用户
 
-![](Pasted%20image%2020250114160920.png)
+![](Pasted_image_20250114160920.png)
 
 先使用winpeas扫描一下，扫描发现存在一个自动登录的用户
 
-![](Pasted%20image%2020250114164836.png)
+![](Pasted_image_20250114164836.png)
 
 利用凭据转储hash
 

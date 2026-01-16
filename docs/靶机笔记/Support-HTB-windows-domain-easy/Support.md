@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 
 ## 全端口扫描
 ~~~
@@ -128,7 +130,7 @@ Nmap done: 1 IP address (1 host up) scanned in 138.00 seconds
 
 ~~~
 
-# 445(SMB)
+### SMB 信息收集
 
 列出所有共享
 
@@ -150,6 +152,10 @@ do_connect: Connection to 10.10.11.174 failed (Error NT_STATUS_RESOURCE_NAME_NOT
 Unable to connect with SMB1 -- no workgroup available
 
 ~~~
+
+## 漏洞利用
+
+### 逆向工程与 LDAP 凭据获取
 
 有一个UserInfo.exe.zip 看起来比较可疑，下载下来
 
@@ -179,7 +185,7 @@ smb: \> ^C
 
 用DNSpy逆向程序，查找ldap查询的有关类，发现硬编码的密码加密逻辑
 
-![](Pasted%20image%2020250117113837.png)
+![](Pasted_image_20250117113837.png)
 
 编写解密脚本，得到密码`nvEfEK16^1aM4$e7AclUf8x$tRWxPWO1%lmz`
 
@@ -299,7 +305,7 @@ Commands:
           
 ~~~
 
-![](Pasted%20image%2020250117131011.png)
+![](Pasted_image_20250117131011.png)
 
 得到有一个用户ldap，密码是`nvEfEK16^1aM4$e7AclUf8x$tRWxPWO1%lmz`，正是我们所破解的密码
 
@@ -311,9 +317,11 @@ Commands:
 ldapsearch -H ldap://support.htb -D 'ldap@support.htb' -w 'nvEfEK16^1aM4$e7AclUf8x$tRWxPWO1%lmz' -b "DC=support,DC=htb"
 ~~~
 
-![](Pasted%20image%2020250117141705.png)
+![](Pasted_image_20250117141705.png)
 
 在info中发现字符串`Ironside47pleasure40Watchful`很可能是用户support的密码
+
+### WinRM 登录初始访问
 
 尝试验证凭据，发现winrm可登录
 
@@ -327,6 +335,10 @@ WINRM       10.10.11.174    5985   DC               [+] support.htb\support:Iron
 
 ~~~
 
+
+## 权限提升
+
+### 基于资源的约束委派 (RBCD) 提权
 
 在bloodhound中发现SHARED SUPPORT ACCOUNTS这个组对DC有genericall权限，而support这个用户就在SHARED SUPPORT ACCOUNTS组中
 

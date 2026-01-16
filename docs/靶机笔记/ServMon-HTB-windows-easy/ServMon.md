@@ -4,8 +4,10 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
-### 全端口扫描
+## 信息收集
+
+### 端口扫描
+#### 全端口扫描
 ~~~
 ┌──(lizi㉿lizi)-[~/ServMon]
 └─$ sudo nmap -sT -p- --min-rate 2000 10.10.10.184 -oA nmap/ports
@@ -36,7 +38,7 @@ PORT      STATE SERVICE
 
 Nmap done: 1 IP address (1 host up) scanned in 63.09 seconds
 ~~~
-### 默认脚本扫描
+#### 默认脚本扫描
 ~~~
 ┌──(lizi㉿lizi)-[~/ServMon]                                                        └─$ sudo nmap -sT -sV -sC -p 21,22,80,135,139,445,5666,6063,6699,8443,49664,49665,49666,49667,49668,49669,49670 10.10.10.184 -oA nmap/sC                                                           Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-12-05 15:59 CST
 Nmap scan report for 10.10.10.184
@@ -167,7 +169,7 @@ Host script results:
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 147.37 seconds
 ~~~
-### 漏洞脚本扫描
+#### 漏洞脚本扫描
 ~~~
 ┌──(lizi㉿lizi)-[~/ServMon]
 └─$ sudo nmap -sT --script=vuln -p 21,22,80,135,139,445,5666,6063,6699,8443,49664,49665,49666,49667,49668,49669,49670 10.10.10.184 -oA nmap/vuln
@@ -226,7 +228,7 @@ Host script results:
 |_samba-vuln-cve-2012-1182: Could not negotiate a connection:SMB: Failed to receive bytes: ERROR
                                                                                                                                                                                                                                      Nmap done: 1 IP address (1 host up) scanned in 546.65 seconds
 ~~~
-### UDP扫描
+#### UDP 扫描
 ~~~
 ┌──(kali㉿kali)-[~/servmon]
 └─$ sudo nmap -sU --top-ports 20 10.10.10.184 -oA nmap/UDP     
@@ -261,7 +263,7 @@ Nmap done: 1 IP address (1 host up) scanned in 14.14 seconds
 
 ~~~
 
-# 21(FTP)
+### FTP 信息收集
 扫描结果上写可以匿名登陆
 ~~~
 ┌──(kali㉿kali)-[~/servmon]
@@ -353,9 +355,9 @@ Nadine
 ~~~
 
 
-# 80(web)
+### Web 信息收集
 访问web界面，发现是nvms1000，试了几下弱口令失败后搜索公开漏洞利用
-![](Pasted%20image%2020241208133255.png)
+![](Pasted_image_20241208133255.png)
 
 ~~~
 ┌──(kali㉿kali)-[~/servmon]
@@ -418,11 +420,15 @@ MAPI=1
 
 burp验证一下，发现漏洞存在
 
-![](Pasted%20image%2020241208133400.png)
+![](Pasted_image_20241208133400.png)
+
+## 漏洞利用
+
+### NVMS 1000 目录遍历获取凭据
 
 通过前面留下的信息，nathan的桌面上留存着passwords.txt,进行读取
 
-![](Pasted%20image%2020241209100249.png)
+![](Pasted_image_20241209100249.png)
 
 拿到这7个密码
 
@@ -441,6 +447,10 @@ IfH3s4b0Utg0t0H1sH0me
 
 Gr4etN3w5w17hMySk1Pa5$
 ~~~
+
+
+
+### SSH 登录
 
 在web端尝试登录全部失败，试一下ssh
 
@@ -497,6 +507,10 @@ The command completed successfully.
 
 ~~~
 
+
+## 权限提升
+
+### NSClient++ 提权
 
 查看一下8443端口开启的服务
 
@@ -607,7 +621,7 @@ Current password: ew2x6SsGTxjRwXOT
 
 nsclient的web服务似乎访问有问题
 
-![](Pasted%20image%2020241209154114.png)
+![](Pasted_image_20241209154114.png)
 
 试一下转发到其他端口，ssh建立隧道转发
 
@@ -615,11 +629,11 @@ nsclient的web服务似乎访问有问题
 ssh -L 8443:127.0.0.1:8443 nadine@10.10.10.184 
 ~~~
 
-![](Pasted%20image%2020241209164816.png)
+![](Pasted_image_20241209164816.png)
 
 成功登录
 
-![](Pasted%20image%2020241213210626.png)
+![](Pasted_image_20241213210626.png)
 
 搜索公开漏洞利用，发现有提权利用
 
@@ -738,7 +752,7 @@ Mode                LastWriteTime         Length Name
 
 ~~~
 
-![](Pasted%20image%2020241213213707.png)
+![](Pasted_image_20241213213707.png)
 
 这里多次尝试重启服务失败，但是github上有另外的脚本
 

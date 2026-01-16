@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ### 全端口扫描
 
 ~~~
@@ -172,7 +174,7 @@ Nmap done: 1 IP address (1 host up) scanned in 599.93 seconds
 
 ~~~
 
-# 445(smb)
+### SMB 信息收集
 不允许匿名访问，没什么信息
 
 ~~~
@@ -188,20 +190,24 @@ Unable to connect with SMB1 -- no workgroup available
 
 ~~~
 
-# 80(web)
-![](Pasted%20image%2020250111232747.png)
+### Web 信息收集
+![](Pasted_image_20250111232747.png)
 
 发现settings界面，似乎能让我们更改ldap的密码
 
-![](Pasted%20image%2020250111232831.png)
+![](Pasted_image_20250111232831.png)
 
 抓包分析的时候发现只提交了ip的表单，可能存在ssrf？
 
-![](Pasted%20image%2020250113135048.png)
+![](Pasted_image_20250113135048.png)
+
+## 漏洞利用
+
+### 打印机服务攻击获取凭据
 
 尝试让服务器访问我的机器，用responder进行监听，成功监听到密码
 
-![](Pasted%20image%2020250113140502.png)
+![](Pasted_image_20250113140502.png)
 
 拿到一组凭据`svc-printer::1edFg43012!!`
 
@@ -291,9 +297,13 @@ INFO: Compressing output into 20250113015530_bloodhound.zip
 
 ~~~
 
+## 权限提升
+
+### Server Operators 提权
+
 查看svc-printer所属的组，发现有一个server operator
 
-![](Pasted%20image%2020250113150837.png)
+![](Pasted_image_20250113150837.png)
 
 ~~~
 *Evil-WinRM* PS C:\Users\svc-printer\Documents>net user svc-printer

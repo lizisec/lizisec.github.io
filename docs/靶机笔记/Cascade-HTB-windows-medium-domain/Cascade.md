@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/htb/Cascade]
 └─$ sudo nmap -sT -p- --min-rate 2000  10.10.10.182 -oA nmap/ports
@@ -120,9 +122,9 @@ Nmap done: 1 IP address (1 host up) scanned in 93.05 seconds
 
 ~~~
 
-# 445
+### 445 端口 SMB
 
-# 389
+### 389 端口 LDAP
 用windapsearch枚举一下用户
 ~~~
 python windapsearch.py -d cascade.local --dc-ip 10.10.10.182 -U > ../ldapusers.txt 
@@ -376,4 +378,12 @@ SMBMap - Samba Share Enumerator v1.10.5 | Shawn Evans - ShawnDEvans@gmail.com
 audit共享中有一个audit.db
 用dbeaver打开发现用户ArkSvc的密码
 
-![](Pasted%20image%2020250208225909.png)
+![](Pasted_image_20250208225909.png)
+
+## 漏洞利用
+
+待补充
+
+## 权限提升
+
+待补充

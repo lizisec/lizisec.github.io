@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ### 全端口扫描
 
 ~~~
@@ -133,7 +135,7 @@ Nmap done: 1 IP address (1 host up) scanned in 110.80 seconds
 
 ~~~
 
-# 445(SMB)
+### SMB 信息收集
 列出所有共享
 
 ~~~
@@ -163,6 +165,10 @@ Unable to connect with SMB1 -- no workgroup available
 LAPS_Datasheet.docx  LAPS_OperationsGuide.docx  LAPS_TechnicalSpecification.docx  LAPS.x64.msi  nmap  winrm_backup.zip
 
 ~~~
+
+## 漏洞利用
+
+### 破解备份文件获取 SSL 证书
 
 破解zip的密码
 
@@ -288,6 +294,8 @@ LAPS_OperationsGuide.docx  LAPS.x64.msi                      legacyy_dev_auth.pf
 																																						  
 ~~~
 
+### Evil-WinRM 证书登录
+
 利用证书和私钥进行登录
 
 ~~~
@@ -323,6 +331,10 @@ exit
 
 ~~~
 
+## 权限提升
+
+### Powershell 历史记录获取凭据
+
 横向移动
 
 ~~~
@@ -342,6 +354,8 @@ Info: Establishing connection to remote endpoint
 timelapse\svc_deploy
 
 ~~~
+
+### LAPS 凭据窃取 (管理员提权)
 
 查看组发现是LAPS_Readers
 

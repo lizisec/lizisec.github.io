@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ## 全端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/insanity]
@@ -153,7 +155,7 @@ Nmap done: 1 IP address (1 host up) scanned in 8.10 seconds
 
 ~~~
 
-# 21(FTP)
+### FTP 信息收集
 发现可以匿名登录
 有一个文件夹pub
 看起来是空的，也不能往里面传文件，暂时搁置
@@ -201,9 +203,9 @@ drwxr-xr-x    2 0        0               6 Apr 01  2020 pub
 
 ~~~
 
-# 80(web)
+### Web 信息收集
 有个邮箱地址`hello@insanityhosting.vm`，暂存
-![](Pasted%20image%2020241120161338.png)
+![](Pasted_image_20241120161338.png)
 做一下目录爆破
 ~~~
 ┌──(kali㉿kali)-[~/insanity]
@@ -241,33 +243,33 @@ Finished
 
 ### news
 一个介绍页，似乎是BluditCMS搭建的一个博客
-![](Pasted%20image%2020241120162456.png)
+![](Pasted_image_20241120162456.png)
 ### monitoring
 一个登录页，没有其他的信息
-![](Pasted%20image%2020241120162339.png)
+![](Pasted_image_20241120162339.png)
 
 ### data
 
-![](Pasted%20image%2020241120162728.png)
-![](Pasted%20image%2020241120162747.png)
+![](Pasted_image_20241120162728.png)
+![](Pasted_image_20241120162747.png)
 
-![](Pasted%20image%2020241120162759.png)
+![](Pasted_image_20241120162759.png)
 
 给了以一个版本号1.14.0，会是CMS的版本号吗
 版本相差太大，大概率不是Bludit的版本号
 
-![](Pasted%20image%2020241120163511.png)
+![](Pasted_image_20241120163511.png)
 
 ### phpmyadmin
 试一下弱口令登录
 admin::admin和root::root都失败了，暂时放弃
-![](Pasted%20image%2020241120161823.png)
+![](Pasted_image_20241120161823.png)
 
 ### webmail
 是一个Squirremail的服务，版本是1.4.22
-![](Pasted%20image%2020241120161832.png)
+![](Pasted_image_20241120161832.png)
 寻找一下有没有公开漏洞，发现存在RCE
-![](Pasted%20image%2020241120162012.png)
+![](Pasted_image_20241120162012.png)
 
 尝试利用发现需要认证
 
@@ -352,11 +354,11 @@ Finished
 有之前没有发现的phpinfo.php
 php的版本为7.2.33
 
-![](Pasted%20image%2020241120163937.png)
+![](Pasted_image_20241120163937.png)
 
 再次访问news目录
 
-![](Pasted%20image%2020241120164106.png)
+![](Pasted_image_20241120164106.png)
 
 这里被重定向了，试试更改域名
 
@@ -377,7 +379,7 @@ ff02::2         ip6-allrouters
 ~~~
 
 再次访问news目录
-![](Pasted%20image%2020241120165904.png)
+![](Pasted_image_20241120165904.png)
 
 news应该就是安装了cms的目录，另外还有一个用户名Otis
 
@@ -411,13 +413,13 @@ insanity
 
 phpmyadmin用Otis和空密码登录进去了.......
 
-![](Pasted%20image%2020241120203102.png)
+![](Pasted_image_20241120203102.png)
 
 还有monitoring使用otis::123456也成功登录
 
 这组凭据也可以登录到webmail！
 
-![](Pasted%20image%2020241120210432.png)
+![](Pasted_image_20241120210432.png)
 
 但是尝试了RCE的利用脚本全都失败
 
@@ -425,13 +427,13 @@ phpmyadmin用Otis和空密码登录进去了.......
 
 搞一台不存在的主机
 
-![](Pasted%20image%2020241121115424.png)
+![](Pasted_image_20241121115424.png)
 
 发现确实会通过这里发邮件
 
-![](Pasted%20image%2020241121115357.png)
+![](Pasted_image_20241121115357.png)
 
-![](Pasted%20image%2020241121115513.png)
+![](Pasted_image_20241121115513.png)
 
 实在没有什么想法了，试一下有没有sql注入
 
@@ -745,6 +747,10 @@ ID, Host, Date Time, Status
 1,elliot,,*5A5749F309CAC33B27BA94EE02168FA3C3E7A3E9
 ~~~
 
+## 漏洞利用
+
+### 获取 SSH 凭据
+
 识别一下hash
 ~~~
 ┌──(kali㉿kali)-[~/insanity]
@@ -808,7 +814,7 @@ Least Possible Hashs:
 
 root的密码未查到，但是查到了elliot的密码elliot123
 
-![](Pasted%20image%2020241121132857.png)
+![](Pasted_image_20241121132857.png)
 
 试一下ssh登录，成功登录
 
@@ -824,6 +830,10 @@ Last login: Wed Aug 31 10:00:29 1994 from YIWf3H2/d`/%pRveZR
 [elliot@insanityhosting ~]$   ~~~
 
 ~~~
+
+## 权限提升
+
+### 浏览器凭据解密
 
 查看passwd
 
@@ -959,4 +969,4 @@ Password: 'S8Y389KJqWpJuSwFqFZHwfZ3GnegUa'
 
 成功提权.....兔子洞超多的靶机，打的心力憔悴
 
-![](Pasted%20image%2020241121142922.png)
+![](Pasted_image_20241121142922.png)

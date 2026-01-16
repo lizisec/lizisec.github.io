@@ -4,7 +4,7 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
 
 ## 全端口扫描
 ~~~
@@ -241,7 +241,7 @@ Nmap done: 1 IP address (1 host up) scanned in 600.13 seconds
 
 ~~~
 
-# 389(LDAP)
+### LDAP 信息收集
 使用windapsearch枚举用户失败
 ~~~
 ┌──(myvenv)─(kali㉿kali)-[~/htb/mantis/windapsearch]
@@ -260,7 +260,7 @@ Nmap done: 1 IP address (1 host up) scanned in 600.13 seconds
                                                        
 ~~~
 
-# 445(SMB)
+### SMB 信息收集
 暂时没有共享
 
 ~~~
@@ -276,19 +276,19 @@ Unable to connect with SMB1 -- no workgroup available
                                                               
 ~~~
 
-# 8080(HTTP)
+### HTTP 8080 信息收集
 看起来是个菜谱的博客
 
-![](Pasted%20image%2020250122121331.png)
+![](Pasted_image_20250122121331.png)
 
 发现了一个登录页，试一下admin::admin失败
 
-![](Pasted%20image%2020250122121453.png)
+![](Pasted_image_20250122121453.png)
 
 也没有什么有价值的公开漏洞
 
 
-# 1337(web)
+### Web 1337 信息收集
 目录爆破一下发现secure_notes
 
 ~~~
@@ -324,11 +324,15 @@ dev_notes_NmQyNDI0NzE2YzVmNTM0MDVmNTA0MDczNzM1NzMwNzI2NDIx.txt.txt
 web.config（无法访问）
 ~~~
 
-![](Pasted%20image%2020250122154058.png)
+![](Pasted_image_20250122154058.png)
+
+## 漏洞利用
+
+### 敏感信息泄露与数据库利用
 
 查看dev_notes_NmQyNDI0NzE2YzVmNTM0MDVmNTA0MDczNzM1NzMwNzI2NDIx.txt.txt
 
-![](Pasted%20image%2020250122154153.png)
+![](Pasted_image_20250122154153.png)
 
 文件名可能有点东西，尝试解密
 
@@ -348,11 +352,11 @@ m$$ql_S@_P@ssW0rd!
 
 使用dbeaver连接
 
-![](Pasted%20image%2020250122170839.png)
+![](Pasted_image_20250122170839.png)
 
 得到两组凭据
 
-![](Pasted%20image%2020250122171121.png)
+![](Pasted_image_20250122171121.png)
 
 ~~~
 admin::AL1337E2D6YHm0iIysVzG8LA76OozgMSlyOJk1Ov5WCGK+lgKY6vrQuswfWHKZn2+A==(加密的)
@@ -390,6 +394,10 @@ SMBMap - Samba Share Enumerator v1.10.5 | Shawn Evans - ShawnDEvans@gmail.com
 [*] Closed 1 connections
 
 ~~~
+
+## 权限提升
+
+### MS14-068 (Golden Ticket)
 
 利用 MS14-068进行提权，这个漏洞允许普通用户生成黄金票据
 

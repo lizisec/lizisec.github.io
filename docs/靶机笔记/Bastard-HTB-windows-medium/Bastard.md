@@ -1,14 +1,19 @@
 ---
 title: Bastard
+tags:
+  - HTB
+  - Windows
+  - Medium
+  - Drupal
+  - JuicyPotato
 pagination_prev: null
 pagination_next: null
 ---
+## 信息收集
 
+### 端口扫描
 
-
-# 端口扫描
-
-全端口扫描
+#### 全端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/bastard]
 └─$ sudo nmap -sT -p- --min-rate 2000 10.10.10.9 -oA nmap/ports
@@ -25,7 +30,7 @@ Nmap done: 1 IP address (1 host up) scanned in 66.40 seconds
 
 ~~~
 
-默认脚本扫描
+#### 默认脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/bastard]
 └─$ sudo nmap -sT -sV -sC -O -p80,135 10.10.10.9 -oA nmap/sC
@@ -60,7 +65,7 @@ Nmap done: 1 IP address (1 host up) scanned in 25.93 seconds
 
 ~~~
 
-漏洞脚本扫描
+#### 漏洞脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/bastard]
 └─$ sudo nmap -sT --script=vuln -p80,135 10.10.10.9 -oA nmap/vuln
@@ -115,7 +120,7 @@ Nmap done: 1 IP address (1 host up) scanned in 36415.69 seconds
 
 ~~~
 
-UDP扫描
+#### UDP扫描
 ~~~
 ┌──(kali㉿kali)-[~/bastard]
 └─$ sudo nmap -sU --top-ports 20 10.10.10.9 -oA nmap/UDP
@@ -150,11 +155,11 @@ Nmap done: 1 IP address (1 host up) scanned in 3.52 seconds
 
 ~~~
 
-# 80(web)
+### Web 信息收集
 
 访问发现是Drupal的登录页
 
-![](Pasted%20image%2020241113220957.png)
+![](Pasted_image_20241113220957.png)
 
 试一下常见弱口令，没有登陆成功
 ~~~
@@ -166,13 +171,13 @@ admin::123456
 首先获取Drupal的版本信息，询问ChatGPT得知Drupal的版本信息在`CHANGELOG.txt`中
 尝试访问一下
 
-![](Pasted%20image%2020241113221054.png)
+![](Pasted_image_20241113221054.png)
 
 我们得到了Drupal的版本为7.54
 
 查找一下nday
 
-![](Pasted%20image%2020241113221200.png)
+![](Pasted_image_20241113221200.png)
 
 似乎是有RCE的漏洞，尝试利用一下
 
@@ -255,7 +260,11 @@ drupalgeddon2>>
 
 ~~~
 
-# 提权
+## 漏洞利用
+
+通过漏洞利用脚本拿到一个初始的 Drupal shell
+
+## 权限提升
 
 测试了几个命令，发现利用脚本给的shell并不稳定，功能也有问题，我们尝试完善一下交互性
 

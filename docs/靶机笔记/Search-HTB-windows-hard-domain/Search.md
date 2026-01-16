@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/htb/Search]
@@ -184,10 +186,10 @@ Host script results:
 
 ~~~
 
-# 80(web)
+### Web 80 信息收集
 没什么特别的一个静态页面
 
-![](Pasted%20image%2020250205222037.png)
+![](Pasted_image_20250205222037.png)
 
 搜集一下用户名
 
@@ -234,13 +236,13 @@ Finished
                                                                                           
 ~~~
 
-# 443(web)
+### Web 443 信息收集
 看起来似乎和80的页面一模一样
 查看证书信息有一个research，暂且当用户名用着
-![](Pasted%20image%2020250205222516.png)
+![](Pasted_image_20250205222516.png)
 
 
-# 88(kerberos)
+### Kerberos 枚举与凭据获取
 使用搜集的用户字典进行kerbrute，发现四个有效的用户名
 ~~~
 (python3.9) ┌──(kali㉿kali)-[~/htb/Search/kerbrute]
@@ -268,9 +270,9 @@ Version: dev (n/a) - 02/05/25 - Ronnie Flathers @ropnop
 
 但是注意到有两张相同的照片
 
-![](Pasted%20image%2020250206122655.png)
+![](Pasted_image_20250206122655.png)
 
-![](Pasted%20image%2020250206122709.png)
+![](Pasted_image_20250206122709.png)
 
 这明显多了什么东西
 
@@ -371,6 +373,10 @@ SMBMap - Samba Share Enumerator v1.10.5 | Shawn Evans - ShawnDEvans@gmail.com
 ~~~
 
 检查了一番没有什么有价值的信息
+
+## 漏洞利用
+
+### Kerberoasting 与 横向移动
 
 试一下用这组凭据进行kerberoast，发现可以对用户web_svc进行kerberoast
 ~~~
@@ -489,7 +495,7 @@ smb: \edgar.jacobs\Desktop\> dir
 
 ~~~
 
-![](Pasted%20image%2020250206192353.png)
+![](Pasted_image_20250206192353.png)
 
 ~~~
 ┌──(kali㉿kali)-[~/htb/Search]
@@ -714,17 +720,21 @@ wQIDAQAB
 
 直接把ca证书导入到浏览器即可，提示要密码就输入misspissy
 
-![](Pasted%20image%2020250206211049.png)
+![](Pasted_image_20250206211049.png)
 
 再次尝试访问443端口的服务
 
-![](Pasted%20image%2020250206211720.png)
+![](Pasted_image_20250206211720.png)
 
 成功登陆进webshell
 
+## 权限提升
+
+### gMSA 账户利用与域管理员提权
+
 查找提权路径
 
-![](Pasted%20image%2020250206212406.png)
+![](Pasted_image_20250206212406.png)
 
 上传GMSAPasswordReader.exe
 

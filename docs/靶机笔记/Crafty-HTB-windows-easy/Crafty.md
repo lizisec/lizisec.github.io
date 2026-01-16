@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ### 全端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/Crafty]
@@ -103,10 +105,10 @@ Nmap done: 1 IP address (1 host up) scanned in 4.49 seconds
 
 ~~~
 
-# 80(web)
+### 80 端口 Web 信息收集
 访问80端口被重定向到crafty.htb这个域名
 
-![](Pasted%20image%2020241115133208.png)
+![](Pasted_image_20241115133208.png)
 
 修改一下hosts文件，并且进行子域名搜集
 
@@ -138,7 +140,9 @@ Requests/sec.: 0
 
 找不到更多的信息，试一下minecraft
 
-# 25565(minecraft)
+## 漏洞利用
+
+### Minecraft Log4j 漏洞
 
 提到的版本是1.16.5
 在寻找mc的漏洞利用的时候找到了这个[github库](https://github.com/Hololm/MCMetasploit?tab=readme-ov-file)
@@ -147,15 +151,15 @@ Requests/sec.: 0
 ### pycraft
 可以使用[pycraft](https://github.com/ammaraskar/pyCraft)进行连接
 ldap默认端口是389，这里收到回复，基本确定存在漏洞
-![](Pasted%20image%2020241119095807.png)
+![](Pasted_image_20241119095807.png)
 下载[poc]( https://github.com/kozmer/log4j-shell-poc)
 把poc中连接的命令由/bin/sh改成powershell.exe
-![](Pasted%20image%2020241119100526.png)
+![](Pasted_image_20241119100526.png)
 
-![](Pasted%20image%2020241119190641.png)
+![](Pasted_image_20241119190641.png)
 成功拿到shell
 
-# 提权
+## 权限提升
 查看systeminfo，hotfix没有开
 ~~~
 PS C:\users\svc_minecraft\server> systeminfo systeminfo Host Name: CRAFTY OS Name: Microsoft Windows Server 2019 Standard OS Version: 10.0.17763 N/A Build 17763 OS Manufacturer: Microsoft Corporation OS Configuration: Standalone Server OS Build Type: Multiprocessor Free Registered Owner: Windows User Registered Organization: Product ID: 00429-00521-62775-AA944 Original Install Date: 4/10/2020, 9:48:06 AM System Boot Time: 11/17/2024, 6:33:28 PM System Manufacturer: VMware, Inc. System Model: VMware7,1 System Type: x64-based PC Processor(s): 2 Processor(s) Installed. [01]: AMD64 Family 25 Model 1 Stepping 1 AuthenticAMD ~2994 Mhz [02]: AMD64 Family 25 Model 1 Stepping 1 AuthenticAMD ~2994 Mhz BIOS Version: VMware, Inc. VMW71.00V.23553139.B64.2403260936, 3/26/2024 Windows Directory: C:\Windows System Directory: C:\Windows\system32 Boot Device: \Device\HarddiskVolume2 System Locale: en-us;English (United States) Input Locale: en-us;English (United States) Time Zone: (UTC-08:00) Pacific Time (US & Canada) Total Physical Memory: 4,095 MB Available Physical Memory: 2,685 MB Virtual Memory: Max Size: 4,799 MB Virtual Memory: Available: 2,564 MB Virtual Memory: In Use: 2,235 MB Page File Location(s): C:\pagefile.sys Domain: WORKGROUP Logon Server: \\CRAFTY Hotfix(s): N/A Network Card(s): 1 NIC(s) Installed. [01]: vmxnet3 Ethernet Adapter Connection Name: Ethernet0 DHCP Enabled: No IP address(es) [01]: 10.10.11.249 [02]: fe80::2d27:9066:33bf:280b [03]: dead:beef::12a5:6889:b62f:ef43 Hyper-V Requirements: A hypervisor has been detected. Features required for Hyper-V will not be displayed.
@@ -233,9 +237,9 @@ PS C:\users\svc_minecraft\server>
 
 发现了一个可疑的字符串，找一下是用来干什么的
 
-![](Pasted%20image%2020241119223003.png)
+![](Pasted_image_20241119223003.png)
 
-![](Pasted%20image%2020241119223551.png)
+![](Pasted_image_20241119223551.png)
 
 s67u84zKq8IXw
 这个应该就是password
@@ -356,7 +360,7 @@ type root.txt
 34c5a2d5e297c430090e0d9e61c2c34d
 ~~~
 
-## 再次提权
+### 再次提权 (NT Authority)
 需要提权到nt authority
 
 下载[psexec](https://learn.microsoft.com/en-us/sysinternals/downloads/psexec)

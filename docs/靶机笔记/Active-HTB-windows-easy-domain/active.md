@@ -1,5 +1,11 @@
 ---
 title: Active
+tags:
+  - HTB
+  - Windows
+  - Easy
+  - Active Directory
+  - GPP
 pagination_prev: null
 pagination_next: null
 ---
@@ -187,7 +193,9 @@ SMBMap - Samba Share Enumerator v1.10.5 | Shawn Evans - ShawnDEvans@gmail.com
 [*] Closed 1 connections    
 ~~~
 
-#### 发现 GPP 凭据
+## 漏洞利用
+
+### 发现 GPP 凭据
 
 发现xml文件中有保存的凭据
 
@@ -200,7 +208,7 @@ SMBMap - Samba Share Enumerator v1.10.5 | Shawn Evans - ShawnDEvans@gmail.com
                  
 ~~~
 
-#### 解密 GPP 密码
+### 解密 GPP 密码
 
 使用gpp-decrypt进行解密
 
@@ -211,7 +219,7 @@ GPPstillStandingStrong2k18
 
 ~~~
 
-#### 凭据验证
+### 凭据验证
 
 得到一组凭据
 `SVC_TGS::GPPstillStandingStrong2k18`
@@ -237,7 +245,7 @@ LDAP        10.10.10.100    389    DC               [+] active.htb\SVC_TGS:GPPst
 
 ~~~
 
-#### 使用凭据访问 SMB
+### 使用凭据访问 SMB
 
 使用这组凭据访问smb共享
 
@@ -273,7 +281,9 @@ SMBMap - Samba Share Enumerator v1.10.5 | Shawn Evans - ShawnDEvans@gmail.com
                                                                                          
 ~~~
 
-#### BloodHound 信息收集
+## 权限提升
+
+### BloodHound 信息收集
 
 利用bloodhound进行信息搜集，没找到提权的路径
 
@@ -298,7 +308,7 @@ INFO: Compressing output into 20241229093707_bloodhound.zip
 
 ~~~
 
-## 权限提升
+
 
 ### Kerberoasting 攻击
 

@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 ## 全端口扫描
 
 ~~~
@@ -145,17 +147,19 @@ Nmap done: 1 IP address (1 host up) scanned in 2.97 seconds
 
 ~~~
 
-# 80
+## 漏洞利用
+
+### 80 端口 Web 枚举与 SCF 攻擊
 默认页是一个登录框
-![](Pasted%20image%2020241121193339.png)
+![](Pasted_image_20241121193339.png)
 
 试了一下admin::admin就进去了，看起来像是管理打印机的一个网页
 
-![](Pasted%20image%2020241121193419.png)
+![](Pasted_image_20241121193419.png)
 
 可以上传文件
 
-![](Pasted%20image%2020241121193519.png)
+![](Pasted_image_20241121193519.png)
 
 
 试了很多种后缀都没什么线索，考虑到这台机器开启了smb服务，上传的文件可能是上传到smb里面的，经过一番查找，scf文件可以再smb中触发，使它连接到我们的smb共享，可能会泄露凭据
@@ -331,7 +335,9 @@ driver\tony
 17c0495384732e2cf20a7bbffb8b7ea1
 ~~~
 
-# 提权
+## 权限提升
+
+### PrintNightmare (CVE-2021-1675)
 
 查找有没有历史记录文件
 

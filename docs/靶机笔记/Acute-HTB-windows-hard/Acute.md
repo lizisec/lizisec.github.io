@@ -1,11 +1,17 @@
 ---
 title: Acute
+tags:
+  - HTB
+  - Windows
+  - Hard
+  - Active Directory
 pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
-### 全端口扫描
+## 信息收集
+### 端口扫描
+#### 全端口扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/acute]
@@ -22,7 +28,7 @@ Nmap done: 1 IP address (1 host up) scanned in 119.98 seconds
 
 ~~~
 
-### 默认脚本扫描
+#### 默认脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/acute]
@@ -53,7 +59,7 @@ Nmap done: 1 IP address (1 host up) scanned in 20.63 seconds
 
 ~~~
 
-### 漏洞脚本扫描
+#### 漏洞脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/acute]
@@ -83,7 +89,7 @@ Nmap done: 2 IP addresses (1 host up) scanned in 1332.37 seconds
 
 ~~~
 
-### UDP扫描
+#### UDP扫描
 
 ~~~
 ──(kali㉿kali)-[~/acute]
@@ -118,6 +124,8 @@ Nmap done: 1 IP address (1 host up) scanned in 10.02 seconds
 
 ~~~
 
+### Web 信息收集
+
 访问是404，默认脚本有域名的信息，先改一下hosts
 
 ~~~
@@ -133,6 +141,8 @@ ff02::2         ip6-allrouters
 
 ~~~
 
+#### 子域枚举 (VHost)
+
 查找一下有没有其他子域名，没有什么发现
 
 ~~~
@@ -140,19 +150,21 @@ ff02::2         ip6-allrouters
 ===============================================================                    Gobuster v3.6                                                                      by OJ Reeves (@TheColonial) & Christian Mehlmauer (@firefart)                                                                                                         ===============================================================                    [+] Url:             https://10.10.11.145                                          [+] Method:          GET                                                           [+] Threads:         100                                                           [+] Wordlist:        /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt  [+] User Agent:      gobuster/3.6                                                  [+] Timeout:         10s                                                           [+] Append Domain:   true                                                          ===============================================================                                                                                                       Starting gobuster in VHOST enumeration mode                                                                                                                           ===============================================================                    Found: -.acute.local Status: 400 [Size: 334]                                       Found: %20.acute.local Status: 400 [Size: 334]                                     Found: *checkout*.acute.local Status: 400 [Size: 334]                              Found: -1.acute.local Status: 400 [Size: 334]                                      Found: *docroot*.acute.local Status: 400 [Size: 334]                               Found: *.acute.local Status: 400 [Size: 334]                                       Found: -buy.acute.local Status: 400 [Size: 334]                                    Found: 4%20Color%2099%20IT2.acute.local Status: 400 [Size: 334]                    Found: %7Emike.acute.local Status: 400 [Size: 334]                                 Found: http%3A%2F%2Fwww.acute.local Status: 400 [Size: 334]                        Found: http%3A.acute.local Status: 400 [Size: 334]                                 Found: MSNBC%20Interactive.acute.local Status: 400 [Size: 334]                     Found: Picture%201.acute.local Status: 400 [Size: 334]                                     
 ~~~
 
+#### about 页面与员工信息
+
 在about.html中发现右上角可以下载一个文件（这也太小了）
 
-![](Pasted%20image%2020241214004447.png)
+![](Pasted_image_20241214004447.png)
 
 在文件中我们发现了一个https://atsserver.acute.local/Acute_Staff_Access和admin的名字Lois以及默认密码Password1!
 
 访问发现应该是员工的远程webshell管理后台
 
-![](Pasted%20image%2020241214115925.png)
+![](Pasted_image_20241214115925.png)
 
 访问about.html同时也能发现一些员工的名字
 
-![](Pasted%20image%2020241214140512.png)
+![](Pasted_image_20241214140512.png)
 
 ~~~
 Aileen Wallace
@@ -162,6 +174,8 @@ Ieuan Monks
 Joshua Morgan
 Lois Hopkins
 ~~~
+
+#### 员工名字典爆破
 
 用名字做一下字典
 
@@ -200,9 +214,11 @@ morgan
 hopkins
 ~~~
 
+#### 文档元数据分析
+
 用bp爆破一下，结果一个都没有成功
 
-![](Pasted%20image%2020241214151123.png)
+![](Pasted_image_20241214151123.png)
 
 信息搜集还是不到位，再看一眼其他的信息，下载的docx有可能有敏感信息吗
 
@@ -256,6 +272,8 @@ App Version                     : 16.0000
 
 ~~~
 
+#### 用户名命名规则与新字典
+
 可以看到创建者是FCastle，应该遵守了某种命名规则
 主机名为Acute-PC01
 
@@ -273,13 +291,19 @@ LHopkins
 
 ~~~
 
+## 漏洞利用
+
+### 登录后台获取 shell
+
 edavies 似乎是特殊的
 
-![](Pasted%20image%2020241214151807.png)
+![](Pasted_image_20241214151807.png)
 
 成功登入
 
-![](Pasted%20image%2020241214151912.png)
+![](Pasted_image_20241214151912.png)
+
+### 反向 shell 获取
 
 先传个nc上去弹个shell
 
@@ -311,9 +335,15 @@ Mode                 LastWriteTime         Length Name
 -a----        14/12/2024     07:23          45272 nc64.exe       
 ~~~
 
+## 权限提升
+
+### 本地枚举与任务目录
+
 利用winpeas进行枚举，发现C:\windows\tasks可写，尝试添加恶意脚本进去但是失败了
 
-![](Pasted%20image%2020241214202546.png)
+![](Pasted_image_20241214202546.png)
+
+### RDP 会话与屏幕监控
 
 枚举的时候发现存在rdp会话
 
@@ -326,7 +356,9 @@ qwinsta
 
 利用meterpreter获取屏幕实时监控
 
-![](Pasted%20image%2020241215150134.png)
+![](Pasted_image_20241215150134.png)
+
+### 获取桌面凭据
 
 用户为`imonks`
 密码为`w3_4R3_th3_f0rce.`

