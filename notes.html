@@ -3,7 +3,7 @@ layout: default
 title: Notes
 permalink: /notes/
 ---
-{% assign note_pages = site.pages | where_exp: "p", "p.path contains 'notes/' and p.name == 'index.md'" | sort: "title" %}
+{% assign note_pages = site.pages | where: "name", "index.md" | sort: "title" %}
 
 <h1 class="page-title">Notes</h1>
 <p class="page-intro">按卡片浏览靶机复盘。</p>

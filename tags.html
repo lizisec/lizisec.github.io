@@ -6,7 +6,7 @@ permalink: /tags/
 <h1 class="page-title">Tags</h1>
 
 {% assign sorted_tags = site.tags | sort %}
-{% assign note_pages = site.pages | where_exp: "p", "p.path contains 'notes/' and p.name == 'index.md'" | sort: "title" %}
+{% assign note_pages = site.pages | where: "name", "index.md" | sort: "title" %}
 
 <p class="page-intro">仅保留两类标签：文章标签、靶机标签。</p>
 
