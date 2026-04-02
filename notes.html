@@ -1,0 +1,35 @@
+---
+layout: default
+title: Notes
+permalink: /notes/
+---
+{% assign note_pages = site.pages | where_exp: "p", "p.path contains 'notes/' and p.name == 'index.md'" | sort: "title" %}
+
+<h1 class="page-title">Notes</h1>
+<p class="page-intro">按卡片浏览靶机复盘。</p>
+
+{% if note_pages.size > 0 %}
+  <section class="note-card-grid">
+    {% for p in note_pages %}
+      <article class="note-card">
+        <h3><a href="{{ p.url | relative_url }}">{{ p.title | default: p.url }}</a></h3>
+        <p class="note-meta-line">
+          <span class="note-badge">{{ p.platform | default: "Unknown" }}</span>
+          <span class="note-badge">{{ p.os | default: "Unknown" }}</span>
+          <span class="note-badge">{{ p.difficulty | default: "Unknown" }}</span>
+          <span class="note-badge">{{ p.track | default: "Standalone" }}</span>
+          <span class="note-badge">{{ p.status | default: "Complete" }}</span>
+        </p>
+        {% if p.tags and p.tags.size > 0 %}
+          <p class="tag-list">
+            {% for tag in p.tags %}
+              <a href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}" class="post-tag">{{ tag }}</a>
+            {% endfor %}
+          </p>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </section>
+{% else %}
+  <p class="page-intro">No notes yet.</p>
+{% endif %}

@@ -1,0 +1,44 @@
+title: lizisec notes
+description: HackTheBox / VulnHub 复盘与协议利用记录
+url: "https://lizisec.github.io"
+baseurl: ""
+timezone: Asia/Shanghai
+
+markdown: kramdown
+highlighter: rouge
+permalink: /:slug/
+excerpt_separator: "<!-- truncate -->"
+
+plugins:
+  - jekyll-feed
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: post
+  - scope:
+      path: "notes/"
+    values:
+      layout: note
+      render_with_liquid: false
+  - scope:
+      path: ""
+    values:
+      layout: page
+
+exclude:
+  - .git
+  - .github
+  - .vscode
+  - node_modules
+  - _site
+  - .jekyll-cache
+  - .jekyll-metadata
+  - src
+  - backups

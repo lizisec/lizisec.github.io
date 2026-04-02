@@ -1,0 +1,48 @@
+---
+layout: default
+title: Tags
+permalink: /tags/
+---
+<h1 class="page-title">Tags</h1>
+
+{% assign sorted_tags = site.tags | sort %}
+{% assign note_pages = site.pages | where_exp: "p", "p.path contains 'notes/' and p.name == 'index.md'" | sort: "title" %}
+
+<p class="page-intro">仅保留两类标签：文章标签、靶机标签。</p>
+
+<section class="tag-board">
+  <h2>文章标签</h2>
+  <div class="tag-cloud">
+    {% if sorted_tags.size > 0 %}
+      {% for tag in sorted_tags %}
+        <span class="post-tag">{{ tag[0] }}<span>{{ tag[1] | size }}</span></span>
+      {% endfor %}
+    {% else %}
+      <span class="post-meta">暂无文章标签</span>
+    {% endif %}
+  </div>
+</section>
+
+<section class="tag-board">
+  <h2>靶机标签</h2>
+  <div class="tag-cloud">
+    {% assign seen_note_tags = "|" %}
+    {% for p in note_pages %}
+      {% if p.tags and p.tags.size > 0 %}
+        {% for t in p.tags %}
+          {% capture marker %}|{{ t }}|{% endcapture %}
+          {% unless seen_note_tags contains marker %}
+            {% assign note_count = 0 %}
+            {% for p2 in note_pages %}
+              {% if p2.tags contains t %}
+                {% assign note_count = note_count | plus: 1 %}
+              {% endif %}
+            {% endfor %}
+            <span class="post-tag">{{ t }}<span>{{ note_count }}</span></span>
+            {% capture seen_note_tags %}{{ seen_note_tags }}{{ marker }}{% endcapture %}
+          {% endunless %}
+        {% endfor %}
+      {% endif %}
+    {% endfor %}
+  </div>
+</section>

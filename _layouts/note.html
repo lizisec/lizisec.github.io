@@ -1,0 +1,26 @@
+---
+layout: default
+---
+<article class="post note-post">
+  <header class="post-header">
+    <h1 class="post-title">{{ page.title | default: page.url }}</h1>
+    <p class="post-meta"><a href="{{ '/notes/' | relative_url }}">← Back to Notes</a></p>
+    <p class="note-meta-line">
+      <span class="note-badge">{{ page.platform | default: "Unknown" }}</span>
+      <span class="note-badge">{{ page.os | default: "Unknown" }}</span>
+      <span class="note-badge">{{ page.difficulty | default: "Unknown" }}</span>
+      <span class="note-badge">{{ page.track | default: "Standalone" }}</span>
+      <span class="note-badge">{{ page.status | default: "Complete" }}</span>
+    </p>
+    {% if page.tags and page.tags.size > 0 %}
+      <p class="tag-list">
+        {% for tag in page.tags %}
+          <a href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}" class="post-tag">{{ tag }}</a>
+        {% endfor %}
+      </p>
+    {% endif %}
+  </header>
+  <div class="post-content">
+    {{ content }}
+  </div>
+</article>

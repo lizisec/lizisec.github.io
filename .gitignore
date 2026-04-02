@@ -1,23 +1,13 @@
-# Dependencies
-/node_modules
+# Jekyll build artifacts
+/_site
+/.jekyll-cache
+.jekyll-metadata
+.sass-cache
+.bundle
+vendor/bundle
 
-# Production
-/build
-
-# Generated files
-.docusaurus
-.cache-loader
-
-# Misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Local backups and temp output
+/backups
 
 # Editor
 .vscode/
@@ -27,4 +17,5 @@ yarn-error.log*
 *~
 
 # OS
+.DS_Store
 Thumbs.db
