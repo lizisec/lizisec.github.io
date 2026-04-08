@@ -7,7 +7,8 @@ track: Domain
 ---
 ## 信息收集
 
-## 全端口扫描
+### 端口扫描
+#### 全端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/htb/mantis]
 └─$ sudo nmap -sT -p- --min-rate 2000 10.10.10.52 -oA nmap/ports
@@ -49,7 +50,7 @@ Nmap done: 1 IP address (1 host up) scanned in 42.85 seconds
                                                                       
 
 ~~~
-## 默认脚本扫描
+#### 默认脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/htb/mantis]
 └─$ sudo nmap -sT -sC -sV -p 53,88,135,139,389,445,464,593,636,1337,1433,3268,3269,5722,8080,9389,47001,49152,49153,49154,49155,49157,49158,49162,49166,49172,50255 10.10.10.52 -oA nmap/sC
@@ -169,7 +170,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 81.61 seconds
 
 ~~~
-## 漏洞脚本扫描
+#### 漏洞脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/htb/mantis]
 └─$ sudo nmap -sT --script=vuln -p 53,88,135,139,389,445,464,593,636,1337,1433,3268,3269,5722,8080,9389,47001,49152,49153,49154,49155,49157,49158,49162,49166,49172,50255 10.10.10.52 -oA nmap/vuln
@@ -515,5 +516,15 @@ nt authority\system
 ~~~
 
 
+## 当前进度（WIP）
+
+目前已通过 `james` 凭据结合 MS14-068 路线拿到 SYSTEM shell，核心利用链已跑通。  
+但本文尚未补充最终验证步骤（如目标机关键文件确认、完整收尾截图与经验总结）。
+
+## 下一步计划
+
+1. 补齐最终目标验证（如用户/管理员标志文件或等价证明）。  
+2. 增加一段“失败分支与排障点”总结，便于复现。  
+3. 整理工具依赖版本，避免后续复现实验出现偏差。  
 
 

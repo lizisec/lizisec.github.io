@@ -9,7 +9,7 @@ track: Standalone
 
 ### 端口扫描
 
-### 全端口扫描
+#### 全端口扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/pov]                                                            └─$ sudo nmap -sT -p- --min-rate 1000  10.10.11.251 -oA nmap/ports                 Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-11-27 01:28 EST                 Nmap scan report for 10.10.11.251                                                  Host is up (0.078s latency).                                                       Not shown: 65534 filtered tcp ports (no-response)                                  PORT   STATE SERVICE                                                                                                                                                  80/tcp open  http
@@ -18,7 +18,7 @@ Nmap done: 1 IP address (1 host up) scanned in 131.52 seconds
 
 ~~~
 
-### 默认脚本扫描
+#### 默认脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/pov]
@@ -46,7 +46,7 @@ Nmap done: 1 IP address (1 host up) scanned in 25.77 seconds
 
 ~~~
 
-### 漏洞脚本扫描
+#### 漏洞脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/pov]
@@ -75,7 +75,7 @@ Nmap done: 1 IP address (1 host up) scanned in 954.31 seconds
 
 ~~~
 
-### UDP扫描
+#### UDP 扫描
 ~~~
 ┌──(kali㉿kali)-[~/pov]
 └─$ sudo nmap -sU --top-ports 20 pov.htb -oA nmap/UDP 
@@ -711,6 +711,16 @@ SeIncreaseWorkingSetPrivilege Increase a process working set Disabled
 
 找到利用[脚本](https://raw.githubusercontent.com/decoder-it/psgetsystem/master/psgetsys.ps1)
 
+## 当前进度（WIP）
+
+本文已完成从文件读取到 ViewState RCE，再到用户凭据提取与 user flag 获取。  
+在 `SeDebugPrivilege` 提权处中断，后续 SYSTEM/Administrator 获取与最终收尾还未补齐。
+
+## 下一步计划
+
+1. 继续完成 `SeDebugPrivilege` 提权链并记录关键命令输出。  
+2. 补充 root/administrator 侧验证与截图。  
+3. 增加一段简短复盘，说明该题的核心突破点与防守面。  
 
 
 

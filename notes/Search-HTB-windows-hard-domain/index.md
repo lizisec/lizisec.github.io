@@ -9,6 +9,8 @@ track: Domain
 
 ### 端口扫描
 
+#### 全端口扫描
+
 ~~~
 ┌──(kali㉿kali)-[~/htb/Search]
 └─$ cat nmap/ports.nmap 
@@ -37,6 +39,8 @@ PORT      STATE SERVICE
 # Nmap done at Wed Feb  5 08:08:01 2025 -- 1 IP address (1 host up) scanned in 66.49 seconds
 
 ~~~
+
+#### 默认脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/htb/Search]
@@ -115,6 +119,8 @@ Service detection performed. Please report any incorrect results at https://nmap
 # Nmap done at Wed Feb  5 08:20:02 2025 -- 1 IP address (1 host up) scanned in 101.20 seconds
 
 ~~~
+
+#### 漏洞脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/htb/Search]
@@ -893,4 +899,3 @@ C:\users\administrator\desktop>whoami
 search\tristan.davies
 
 ~~~
-

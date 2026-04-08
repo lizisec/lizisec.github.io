@@ -5,7 +5,7 @@ os: Linux
 difficulty: Unknown
 track: Standalone
 ---
-- 下载地址-https://www.vulnhub.com/entry/billy-madison-11,161/
+靶机下载地址：https://www.vulnhub.com/entry/billy-madison-11,161/
 
 ## 信息收集
 
@@ -428,3 +428,14 @@ QUIT
 ~~~
 knock 192.168.2.186 -v 1066 1215 1466 67 1467 1469 1514 1981 1986 
 ~~~
+
+## 当前进度（WIP）
+
+目前完成了主机发现、端口枚举、SMB 收集、Web 路径发现与 cap 邮件线索提取。  
+文章在 `knock` 验证处中断，后续利用链和提权链尚未补齐。
+
+## 下一步计划
+
+1. 验证端口敲门是否会动态开放 FTP/SSH。  
+2. 用 `eric:ericdoesntdrinkhisownpee` 组合尝试可用服务登录。  
+3. 若拿到初始访问，补全权限提升、flag 获取与最终复盘。  

@@ -8,7 +8,7 @@ track: Domain
 ## 信息收集
 
 ### 端口扫描
-## 全端口扫描
+#### 全端口扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/htb/Reel]
@@ -33,7 +33,7 @@ Nmap done: 1 IP address (1 host up) scanned in 66.06 seconds
 
 ~~~
 
-## 默认脚本扫描
+#### 默认脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/htb/Reel]
@@ -156,7 +156,7 @@ Nmap done: 1 IP address (1 host up) scanned in 213.20 seconds
                                                                 
 ~~~
 
-## 漏洞脚本扫描
+#### 漏洞脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/htb/Reel]

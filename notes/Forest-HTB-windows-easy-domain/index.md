@@ -8,7 +8,7 @@ track: Domain
 ## 信息收集
 
 ### 端口扫描
-### 全端口扫描
+#### 全端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/Forest]
 └─$ sudo nmap -sT -p- 10.10.10.161 --min-rate 2000 -oA nmap/ports
@@ -47,7 +47,7 @@ Nmap done: 1 IP address (1 host up) scanned in 33.89 seconds
 
 ~~~
 
-### 默认脚本扫描
+#### 默认脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/Forest]
 └─$ sudo nmap -sT -sC -sV -p 53,88,135,139,389,445,464,593,636,3268,3269,5985,9389,47001,49664,49665,49666,49669,49671,49678,49679,49686,49708,49977 10.10.10.161 -oA nmap/sC
@@ -114,7 +114,7 @@ Nmap done: 1 IP address (1 host up) scanned in 70.92 seconds
 
 ~~~
 
-### 漏洞脚本扫描
+#### 漏洞脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/Forest]
@@ -555,6 +555,5 @@ nt authority\system
 
 
 ~~~
-
 
 

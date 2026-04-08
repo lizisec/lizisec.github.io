@@ -8,7 +8,7 @@ track: Standalone
 ## 信息收集
 
 ### 端口扫描
-## 全端口扫描
+#### 全端口扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/driver]
@@ -28,7 +28,7 @@ Nmap done: 1 IP address (1 host up) scanned in 65.94 seconds
 
 ~~~
 
-## 默认脚本扫描
+#### 默认脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/driver]
@@ -79,7 +79,7 @@ Nmap done: 1 IP address (1 host up) scanned in 52.57 seconds
                                                                           
 ~~~
 
-## 漏洞脚本扫描
+#### 漏洞脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/driver]
@@ -113,7 +113,7 @@ Nmap done: 1 IP address (1 host up) scanned in 433.09 seconds
 
 ~~~
 
-## UDP扫描
+#### UDP 扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/driver]

@@ -8,7 +8,7 @@ track: Standalone
 ## 信息收集
 
 ### 端口扫描
-### 全端口扫描
+#### 全端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ sudo nmap -sT -sV -p- --min-rate 10000 192.168.2.128 -oA nmap/ports
@@ -25,7 +25,7 @@ Service detection performed. Please report any incorrect results at https://nmap
 Nmap done: 1 IP address (1 host up) scanned in 19.59 seconds
 
 ~~~
-### 默认脚本扫描
+#### 默认脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ sudo nmap -sT -sC -p80 192.168.2.128 -oA nmap/sC
@@ -42,7 +42,7 @@ MAC Address: 00:0C:29:50:57:B6 (VMware)
 Nmap done: 1 IP address (1 host up) scanned in 5.26 seconds
 
 ~~~
-### 漏洞脚本扫描
+#### 漏洞脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ sudo nmap -sT --script=vuln -p80 192.168.2.128 -oA nmap/vuln
@@ -84,7 +84,7 @@ MAC Address: 00:0C:29:50:57:B6 (VMware)
 Nmap done: 1 IP address (1 host up) scanned in 320.75 seconds
 
 ~~~
-### UDP扫描
+#### UDP 扫描
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ sudo nmap -sU --top-ports 20 192.168.2.128 -oA nmap/UDP
@@ -120,14 +120,14 @@ Nmap done: 1 IP address (1 host up) scanned in 1.63 seconds
 ~~~
 
 ### Web 信息收集
-## web信息
+#### Web 指纹识别
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ whatweb http://192.168.2.128
 http://192.168.2.128 [200 OK] Apache[2.4.18], Bootstrap, Country[RESERVED][ZZ], HTML5, HTTPServer[Ubuntu Linux][Apache/2.4.18 (Ubuntu)], IP[192.168.2.128], JQuery[1.10.2], Modernizr[2.6.2.min], Script, Title[IMF - Homepage], X-UA-Compatible[IE=edge]
 ~~~
 
-## 目录扫描
+#### 目录扫描
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ sudo gobuster dir -u 'http://192.168.2.128' -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt 
@@ -191,7 +191,7 @@ END_TIME: Wed Oct 30 00:29:59 2024
 DOWNLOADED: 27672 - FOUND: 2
 
 ~~~
-## 文件扫描
+#### 文件扫描
 ~~~
 ┌──(kali㉿kali)-[~/imf]
 └─$ sudo gobuster dir -u 'http://192.168.2.128' -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt -x html,php,txt,zip,cap,rar
@@ -241,7 +241,7 @@ Finished
 /less                 (Status: 301) [Size: 313] [--> http://192.168.2.128/less/]
 /server-status        (Status: 403) [Size: 301]
 ~~~
-### wfuzz
+##### wfuzz
 查看有没有传参
 ~~~
 ┌──(kali㉿kali)-[~/imf]
@@ -915,6 +915,5 @@ root
 ~~~
 定妆照 flag6\{Gh0stProt0c0ls\}
 ![](./Pasted_image_20241102214253.png)
-
 
 

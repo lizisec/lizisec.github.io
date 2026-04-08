@@ -8,7 +8,7 @@ track: Standalone
 ## 信息收集
 
 ### 端口扫描
-### 全端口扫描
+#### 全端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/Crafty]
 └─$ sudo nmap -sT -p- --min-rate 2000 10.10.11.249 -oA nmap/ports
@@ -24,7 +24,7 @@ PORT      STATE SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 65.93 seconds
 
 ~~~
-### 默认脚本扫描
+#### 默认脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/Crafty]
 └─$ sudo nmap -sT -sC -sV -p80 10.10.11.249 -oA nmap/sC
@@ -46,7 +46,7 @@ Nmap done: 1 IP address (1 host up) scanned in 13.02 seconds
 
 
 ~~~
-### 漏洞脚本扫描
+#### 漏洞脚本扫描
 ~~~
 ┌──(kali㉿kali)-[~/Crafty]
 └─$ sudo nmap -sT --script=vuln -p80 10.10.11.249 -oA nmap/vuln
@@ -72,7 +72,7 @@ Nmap done: 1 IP address (1 host up) scanned in 540.63 seconds
 
 
 ~~~
-### UDP扫描
+#### UDP 扫描
 ~~~
 ┌──(kali㉿kali)-[~/Crafty]
 └─$ nmap -sU --top-ports 20 10.10.11.249 -oA nmap/UDP

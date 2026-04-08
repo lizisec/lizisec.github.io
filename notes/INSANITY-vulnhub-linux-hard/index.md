@@ -8,7 +8,7 @@ track: Standalone
 ## 信息收集
 
 ### 端口扫描
-## 全端口扫描
+#### 全端口扫描
 ~~~
 ┌──(kali㉿kali)-[~/insanity]
 └─$ sudo nmap -sT -p- --min-rate 5000 192.168.2.139 -oA nmap/ports
@@ -26,7 +26,7 @@ MAC Address: 00:0C:29:42:5B:48 (VMware)
 Nmap done: 1 IP address (1 host up) scanned in 26.47 seconds
 
 ~~~
-## 默认脚本扫描
+#### 默认脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/insanity]
@@ -78,7 +78,7 @@ Nmap done: 1 IP address (1 host up) scanned in 11.46 seconds
 
 ~~~
 
-## 漏洞脚本扫描
+#### 漏洞脚本扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/insanity]
@@ -120,7 +120,7 @@ Nmap done: 1 IP address (1 host up) scanned in 54.95 seconds
 
 ~~~
 
-## UDP扫描
+#### UDP 扫描
 
 ~~~
 ┌──(kali㉿kali)-[~/insanity]
