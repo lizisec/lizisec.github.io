@@ -4,12 +4,6 @@ platform: HTB
 os: Windows
 difficulty: Unknown
 track: Domain
-status: WIP
-tags:
-- 平台-HTB
-- 系统-Windows
-- 方向-AD
-- 状态-WIP
 ---
 ## 信息收集
 

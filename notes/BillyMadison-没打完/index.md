@@ -4,12 +4,6 @@ platform: VulnHub
 os: Linux
 difficulty: Unknown
 track: Standalone
-status: WIP
-tags:
-- 平台-VulnHub
-- 系统-Linux
-- 方向-Standalone
-- 状态-WIP
 ---
 - 下载地址-https://www.vulnhub.com/entry/billy-madison-11,161/
 

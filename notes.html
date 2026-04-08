@@ -18,15 +18,7 @@ permalink: /notes/
           <span class="note-badge">{{ p.os | default: "Unknown" }}</span>
           <span class="note-badge">{{ p.difficulty | default: "Unknown" }}</span>
           <span class="note-badge">{{ p.track | default: "Standalone" }}</span>
-          <span class="note-badge">{{ p.status | default: "Complete" }}</span>
         </p>
-        {% if p.tags and p.tags.size > 0 %}
-          <p class="tag-list">
-            {% for tag in p.tags %}
-              <a href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}" class="post-tag">{{ tag }}</a>
-            {% endfor %}
-          </p>
-        {% endif %}
       </article>
     {% endfor %}
   </section>

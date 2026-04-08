@@ -10,15 +10,7 @@ layout: default
       <span class="note-badge">{{ page.os | default: "Unknown" }}</span>
       <span class="note-badge">{{ page.difficulty | default: "Unknown" }}</span>
       <span class="note-badge">{{ page.track | default: "Standalone" }}</span>
-      <span class="note-badge">{{ page.status | default: "Complete" }}</span>
     </p>
-    {% if page.tags and page.tags.size > 0 %}
-      <p class="tag-list">
-        {% for tag in page.tags %}
-          <a href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}" class="post-tag">{{ tag }}</a>
-        {% endfor %}
-      </p>
-    {% endif %}
   </header>
   <div class="post-content">
     {{ content }}

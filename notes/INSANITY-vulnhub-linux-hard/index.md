@@ -4,13 +4,6 @@ platform: VulnHub
 os: Linux
 difficulty: Hard
 track: Standalone
-status: Complete
-tags:
-- 平台-VulnHub
-- 系统-Linux
-- 难度-Hard
-- 方向-Standalone
-- 状态-Complete
 ---
 ## 信息收集
 

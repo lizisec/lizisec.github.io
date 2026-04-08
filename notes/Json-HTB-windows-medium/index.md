@@ -4,13 +4,6 @@ platform: HTB
 os: Windows
 difficulty: Medium
 track: Standalone
-status: Complete
-tags:
-- 平台-HTB
-- 系统-Windows
-- 难度-Medium
-- 方向-Standalone
-- 状态-Complete
 ---
 ## 信息收集
 

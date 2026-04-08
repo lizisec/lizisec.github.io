@@ -4,13 +4,6 @@ platform: HTB
 os: Windows
 difficulty: Easy
 track: Domain
-status: Complete
-tags:
-- 平台-HTB
-- 系统-Windows
-- 难度-Easy
-- 方向-AD
-- 状态-Complete
 ---
 ## 信息收集
 

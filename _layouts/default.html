@@ -6,25 +6,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
   <meta name="description" content="{{ page.description | default: site.description }}">
+  {% assign css_build = site.time | date: '%s' %}
   <link rel="icon" href="{{ '/favicon.ico' | relative_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/main.css?v=' | append: css_build | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/pygments-friendly.css?v=' | append: css_build | relative_url }}">
   <link rel="alternate" type="application/rss+xml" title="{{ site.title }} RSS" href="{{ '/feed.xml' | relative_url }}">
 </head>
 <body>
   <header class="site-header">
-    <div class="wrapper header-wrap">
-      <a class="site-title" rel="author" href="{{ '/' | relative_url }}">{{ site.title }}</a>
-      <nav class="site-nav">
-        <a class="page-link-site {% if page.url == '/' %}active{% endif %}" href="{{ '/' | relative_url }}">Home</a>
-        <a class="page-link-site {% if page.url == '/tags/' %}active{% endif %}" href="{{ '/tags/' | relative_url }}">Tags</a>
-        <a class="page-link-site {% if page.url == '/notes/' or page.url contains '/notes/' %}active{% endif %}" href="{{ '/notes/' | relative_url }}">Notes</a>
-        <a class="page-link-site" href="https://github.com/lizisec/lizisec.github.io" target="_blank" rel="noopener noreferrer">GitHub</a>
-      </nav>
+    <div class="wrapper">
+      <div class="header-wrap">
+        <a class="site-title" rel="author" href="{{ '/' | relative_url }}">{{ site.title }}</a>
+        <p class="site-tagline">{{ site.description }}</p>
+        <nav class="site-nav">
+          <a class="page-link-site {% if page.url == '/' %}active{% endif %}" href="{{ '/' | relative_url }}">Home</a>
+          <a class="page-link-site {% if page.url == '/notes/' or page.url contains '/notes/' %}active{% endif %}" href="{{ '/notes/' | relative_url }}">Notes</a>
+          <a class="page-link-site" href="https://github.com/lizisec/lizisec.github.io" target="_blank" rel="noopener noreferrer">GitHub</a>
+        </nav>
+      </div>
     </div>
   </header>
 
   <main class="page-content" aria-label="Content">
-    <div class="wrapper">
+    <div class="wrapper content-shell">
       {{ content }}
     </div>
   </main>

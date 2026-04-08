@@ -4,13 +4,6 @@ platform: HTB
 os: Windows
 difficulty: Medium
 track: Standalone
-status: Complete
-tags:
-- 平台-HTB
-- 系统-Windows
-- 难度-Medium
-- 方向-Standalone
-- 状态-Complete
 ---
 靶机为HTB的域渗透靶机StreamIO
 ![](Pasted_image_20241218204233.png)
