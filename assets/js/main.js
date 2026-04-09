@@ -452,10 +452,105 @@
     });
   };
 
+  const initPixelPet = () => {
+    const widget = document.querySelector("[data-pet-widget]");
+    const sprite = document.querySelector("[data-pet-sprite]");
+    const bodyBtn = document.querySelector("[data-pet-body]");
+    const bubble = document.querySelector("[data-pet-bubble]");
+    const textNode = document.querySelector("[data-pet-text]");
+    const closeBtn = document.querySelector("[data-pet-close]");
+
+    if (!widget || !sprite || !bodyBtn || !bubble || !textNode) return;
+
+    const prefersReducedMotion =
+      window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) widget.classList.add("reduced-motion");
+
+    const frameA = sprite.dataset.frameA || sprite.getAttribute("src") || "";
+    const frameB = sprite.dataset.frameB || frameA;
+    let useBFrame = false;
+
+    if (!prefersReducedMotion && frameA && frameB && frameA !== frameB) {
+      window.setInterval(() => {
+        useBFrame = !useBFrame;
+        sprite.src = useBFrame ? frameB : frameA;
+      }, 820);
+    }
+
+    const chatter = [
+      "今天先信息收集，别急着提权。",
+      "你再点我一次，我就给你 root luck。",
+      "记得保存截图，复盘最怕缺证据。",
+      "看到奇怪端口先做服务识别。",
+      "小提示：失败不是卡住，是在收集线索。",
+      "你负责思路，我负责卖萌。",
+    ];
+
+    const pageHint = (() => {
+      const path = window.location.pathname || "/";
+      if (path === "/" || path === "") return "欢迎回来，今天想复盘哪一台？";
+      if (path.startsWith("/notes/") && path !== "/notes/") return "这篇不错，往下翻我帮你盯目录。";
+      if (path.startsWith("/search/")) return "试试搜平台和难度组合，比如：HTB Windows Hard。";
+      if (path.startsWith("/notes/")) return "选一台机器开练吧，我在右下角加油。";
+      return "摸摸头，继续推进。";
+    })();
+
+    const pick = (items) => items[Math.floor(Math.random() * items.length)];
+    let hideTimerId = 0;
+
+    const hideBubble = () => {
+      bubble.hidden = true;
+      widget.classList.remove("is-chatting");
+    };
+
+    const showMessage = (message, duration = 3200) => {
+      textNode.textContent = message;
+      bubble.hidden = false;
+      widget.classList.add("is-chatting");
+      window.clearTimeout(hideTimerId);
+      if (duration > 0) {
+        hideTimerId = window.setTimeout(hideBubble, duration);
+      }
+    };
+
+    bodyBtn.addEventListener("click", () => {
+      widget.classList.remove("is-hop");
+      void widget.offsetWidth;
+      widget.classList.add("is-hop");
+      showMessage(pick(chatter));
+    });
+
+    bodyBtn.addEventListener("mouseenter", () => {
+      if (!bubble.hidden) return;
+      if (Math.random() < 0.22) showMessage(pick(chatter), 2200);
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        hideBubble();
+      });
+    }
+
+    bubble.addEventListener("click", (event) => {
+      event.stopPropagation();
+    });
+
+    window.setTimeout(() => {
+      showMessage(pageHint, 3600);
+    }, 900);
+
+    window.setInterval(() => {
+      if (document.hidden || !bubble.hidden) return;
+      if (Math.random() < 0.48) showMessage(pick(chatter), 2800);
+    }, 22000);
+  };
+
   onReady(() => {
     initSearch();
     initToc();
     initCodeCopy();
     initImageUx();
+    initPixelPet();
   });
 })();

@@ -37,6 +37,22 @@
       {{ content }}
     </div>
   </main>
+  <aside class="pixel-pet-widget" data-pet-widget aria-live="polite">
+    <div class="pixel-pet-bubble" data-pet-bubble hidden>
+      <p class="pixel-pet-text" data-pet-text></p>
+      <button type="button" class="pixel-pet-close" data-pet-close aria-label="Close pet message">x</button>
+    </div>
+    <button type="button" class="pixel-pet-body" data-pet-body aria-label="Pixel pet">
+      <img
+        class="pixel-pet-sprite"
+        data-pet-sprite
+        src="{{ '/assets/pet/pet_idle_01.svg' | relative_url }}"
+        data-frame-a="{{ '/assets/pet/pet_idle_01.svg' | relative_url }}"
+        data-frame-b="{{ '/assets/pet/pet_idle_02.svg' | relative_url }}"
+        alt="Pixel pet"
+      >
+    </button>
+  </aside>
   <script defer src="{{ '/assets/js/main.js?v=' | append: asset_build | relative_url }}"></script>
 </body>
 </html>
