@@ -19,18 +19,19 @@ kramdown:
 defaults:
   - scope:
       path: ""
+    values:
+      layout: page
+  - scope:
+      path: ""
       type: "posts"
     values:
       layout: post
   - scope:
-      path: "notes/"
+      path: "notes"
+      type: "pages"
     values:
       layout: note
       render_with_liquid: false
-  - scope:
-      path: ""
-    values:
-      layout: page
 
 exclude:
   - .git

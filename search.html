@@ -1,0 +1,57 @@
+---
+layout: page
+title: Search
+permalink: /search/
+---
+
+<section class="search-shell">
+  <label class="search-label" for="site-search-input">Search</label>
+  <input
+    id="site-search-input"
+    class="search-input"
+    type="search"
+    placeholder="搜索标题、正文、平台、系统、难度..."
+    autocomplete="off"
+    data-search-input
+  >
+  <p class="search-hint">支持中英文关键字，空格可组合条件。</p>
+  <p class="search-stats" data-search-stats>输入关键字开始搜索。</p>
+  <ul class="search-results" data-search-results></ul>
+</section>
+
+{% assign note_pages = site.pages | where: "name", "index.md" | where_exp: "p", "p.dir contains 'notes/'" | sort: "title" %}
+<script id="site-search-data" type="application/json">
+[
+{% assign has_item = false %}
+{% for post in site.posts %}
+{% if has_item %},{% endif %}
+{
+  "type": "post",
+  "title": {{ post.title | jsonify }},
+  "url": {{ post.url | relative_url | jsonify }},
+  "date": {{ post.date | date: "%Y-%m-%d" | jsonify }},
+  "platform": "",
+  "os": "",
+  "difficulty": "",
+  "track": "",
+  "text": {{ post.content | strip_html | strip_newlines | replace: "\n", " " | truncate: 2000 | jsonify }}
+}
+{% assign has_item = true %}
+{% endfor %}
+{% for p in note_pages %}
+{% if has_item %},{% endif %}
+{
+  "type": "note",
+  "title": {{ p.title | default: p.url | jsonify }},
+  "url": {{ p.url | relative_url | jsonify }},
+  "date": "",
+  "platform": {{ p.platform | default: "" | jsonify }},
+  "os": {{ p.os | default: "" | jsonify }},
+  "difficulty": {{ p.difficulty | default: "" | jsonify }},
+  "track": {{ p.track | default: "" | jsonify }},
+  "text": {{ p.content | strip_html | strip_newlines | replace: "\n", " " | truncate: 2200 | jsonify }}
+}
+{% assign has_item = true %}
+{% endfor %}
+]
+</script>

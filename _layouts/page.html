@@ -1,6 +1,29 @@
 ---
 layout: default
 ---
+{% if page.url contains '/notes/' and page.url != '/notes/' %}
+<div class="post-float-layout">
+  <nav class="toc-box js-toc" aria-label="Table of contents" hidden>
+    <p class="toc-title">On This Page</p>
+    <ul class="toc-list"></ul>
+  </nav>
+  <article class="post note-post">
+    <header class="post-header">
+      <h1 class="post-title">{{ page.title | default: page.url }}</h1>
+      <p class="post-meta"><a href="{{ '/notes/' | relative_url }}">← Back to Notes</a></p>
+      <p class="note-meta-line">
+        <span class="note-badge">{{ page.platform | default: "Unknown" }}</span>
+        <span class="note-badge">{{ page.os | default: "Unknown" }}</span>
+        <span class="note-badge">{{ page.difficulty | default: "Unknown" }}</span>
+        <span class="note-badge">{{ page.track | default: "Standalone" }}</span>
+      </p>
+    </header>
+    <div class="post-content">
+      {{ content }}
+    </div>
+  </article>
+</div>
+{% else %}
 <article class="page">
   {% if page.title %}
     <h1 class="page-title">{{ page.title }}</h1>
@@ -9,3 +32,4 @@ layout: default
     {{ content }}
   </div>
 </article>
+{% endif %}
