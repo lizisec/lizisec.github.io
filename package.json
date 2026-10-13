@@ -1,0 +1,11 @@
+{
+  "name": "lizisec-notes-checks",
+  "private": true,
+  "description": "Development-only regression checks for the Jekyll site",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "check:js": "node --check assets/js/main.js"
+  },
+  "engines": { "node": ">=22" },
+  "devDependencies": { "jsdom": "26.1.0" }
+}

@@ -4,45 +4,46 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
-  <meta name="description" content="{{ page.description | default: site.description }}">
+  <title>{% if page.title %}{{ page.title | escape }} | {{ site.title | escape }}{% else %}{{ site.title | escape }}{% endif %}</title>
+  <meta name="description" content="{{ page.description | default: site.description | escape }}">
   {% assign asset_build = site.time | date: '%s' %}
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
   <link rel="icon" href="{{ '/favicon.ico' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/lib/nes/nes.min.css' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/main.css?v=' | append: asset_build | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/pygments-friendly.css?v=' | append: asset_build | relative_url }}">
-  <link rel="alternate" type="application/rss+xml" title="{{ site.title }} RSS" href="{{ '/feed.xml' | relative_url }}">
+  <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }} RSS" href="{{ '/feed.xml' | relative_url }}">
 </head>
-{% assign is_note_detail = false %}
-{% if page.url contains '/notes/' and page.url != '/notes/' %}
-  {% assign is_note_detail = true %}
-{% endif %}
-<body class="theme-pixelact{% if page.layout == 'post' or page.layout == 'note' or is_note_detail or page.url == '/search/' %} page-article{% endif %}">
+<body class="theme-pixelact{% if page.layout == 'post' or page.layout == 'note' %} page-article{% endif %}">
+  <a class="skip-link" href="#main-content">跳转到正文</a>
   <header class="site-header">
     <div class="wrapper">
       <div class="header-wrap">
-        <a class="site-title" rel="author" href="{{ '/' | relative_url }}">{{ site.title }}</a>
-        <p class="site-tagline">{{ site.description }}</p>
-        <nav class="site-nav">
-          <a class="page-link-site {% if page.url == '/' %}active{% endif %}" href="{{ '/' | relative_url }}">Home</a>
-          <a class="page-link-site {% if page.url == '/notes/' or page.url contains '/notes/' %}active{% endif %}" href="{{ '/notes/' | relative_url }}">Notes</a>
-          <a class="page-link-site {% if page.url == '/search/' %}active{% endif %}" href="{{ '/search/' | relative_url }}">Search</a>
+        <a class="site-title" rel="author" href="{{ '/' | relative_url }}">{{ site.title | escape }}</a>
+        <p class="site-tagline">{{ site.description | escape }}</p>
+        <nav class="site-nav" aria-label="主导航">
+          <a class="page-link-site {% if page.url == '/' %}active{% endif %}" href="{{ '/' | relative_url }}" {% if page.url == '/' %}aria-current="page"{% endif %}>首页</a>
+          <a class="page-link-site {% if page.url == '/notes/' or page.url contains '/notes/' %}active{% endif %}" href="{{ '/notes/' | relative_url }}" {% if page.url == '/notes/' %}aria-current="page"{% endif %}>靶机笔记</a>
+          <a class="page-link-site {% if page.url == '/search/' %}active{% endif %}" href="{{ '/search/' | relative_url }}" {% if page.url == '/search/' %}aria-current="page"{% endif %}>搜索</a>
+          <a class="page-link-site {% if page.url == '/tags/' %}active{% endif %}" href="{{ '/tags/' | relative_url }}" {% if page.url == '/tags/' %}aria-current="page"{% endif %}>分类</a>
           <a class="page-link-site" href="https://github.com/lizisec/lizisec.github.io" target="_blank" rel="noopener noreferrer">GitHub</a>
         </nav>
       </div>
     </div>
   </header>
 
-  <main class="page-content" aria-label="Content">
+  <main id="main-content" class="page-content" tabindex="-1">
     <div class="wrapper content-shell">
       {{ content }}
     </div>
   </main>
+  <footer class="site-footer wrapper"><p>lizisec notes · 记录思路，持续复盘。</p><a href="{{ '/feed.xml' | relative_url }}">RSS 订阅</a><a href="#main-content">回到顶部 ↑</a></footer>
   <aside class="pixel-pet-widget" data-pet-widget aria-live="polite">
     <div class="pixel-pet-bubble" data-pet-bubble hidden>
       <p class="pixel-pet-text" data-pet-text></p>
-      <button type="button" class="pixel-pet-close" data-pet-close aria-label="Close pet message">x</button>
+      <button type="button" class="pixel-pet-close" data-pet-close aria-label="关闭提示">x</button>
     </div>
-    <button type="button" class="pixel-pet-body" data-pet-body aria-label="Pixel pet">
+    <button type="button" class="pixel-pet-body" data-pet-body aria-label="像素伙伴：点击获取提示">
       <img
         class="pixel-pet-sprite"
         data-pet-sprite

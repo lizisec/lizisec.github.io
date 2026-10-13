@@ -1,0 +1,15 @@
+<article class="note-card nes-container is-dark" data-note-card
+  data-title="{{ include.note.title | escape }}"
+  data-platform="{{ include.note.platform | default: 'Unknown' | escape }}"
+  data-os="{{ include.note.os | default: 'Unknown' | escape }}"
+  data-difficulty="{{ include.note.difficulty | default: 'Unknown' | escape }}"
+  data-track="{{ include.note.track | default: 'Standalone' | escape }}"
+  data-status="{{ include.note.status | default: '未标注' | escape }}">
+  <p class="card-kicker">{{ include.note.platform | escape }} / {{ include.note.os | escape }}</p>
+  <h3><a href="{{ include.note.url | relative_url }}">{{ include.note.title | default: include.note.url | escape }} <span aria-hidden="true">↗</span></a></h3>
+  <p class="note-meta-line">
+    <span class="note-badge">{{ include.note.difficulty | default: 'Unknown' | escape }}</span>
+    <span class="note-badge">{{ include.note.track | default: 'Standalone' | escape }}</span>
+    {% if include.note.status %}<span class="note-badge">{{ include.note.status | escape }}</span>{% endif %}
+  </p>
+</article>

@@ -19,3 +19,10 @@ vendor/bundle
 # OS
 .DS_Store
 Thumbs.db
+
+# Development checks
+node_modules/
+__pycache__/
+
+# Local build runtimes
+/vendor/

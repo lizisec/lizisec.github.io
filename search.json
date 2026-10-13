@@ -1,0 +1,14 @@
+---
+layout: null
+permalink: /search.json
+---
+{% assign note_pages = site.pages | where: 'name', 'index.md' | where_exp: 'p', "p.dir contains 'notes/'" %}
+[
+{% for post in site.posts %}
+  {"type":"post","title":{{ post.title | jsonify }},"url":{{ post.url | relative_url | jsonify }},"date":{{ post.date | date: '%Y-%m-%d' | jsonify }},"tags":{{ post.tags | jsonify }},"text":{{ post.content | markdownify | strip_html | jsonify }}}{% unless forloop.last %},{% endunless %}
+{% endfor %}
+{% if site.posts.size > 0 and note_pages.size > 0 %},{% endif %}
+{% for p in note_pages %}
+  {"type":"note","title":{{ p.title | default: p.url | jsonify }},"url":{{ p.url | relative_url | jsonify }},"platform":{{ p.platform | jsonify }},"os":{{ p.os | jsonify }},"difficulty":{{ p.difficulty | jsonify }},"track":{{ p.track | jsonify }},"status":{{ p.status | jsonify }},"tags":{{ p.tags | jsonify }},"text":{{ p.content | markdownify | strip_html | jsonify }}}{% unless forloop.last %},{% endunless %}
+{% endfor %}
+]

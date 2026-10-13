@@ -1,16 +1,38 @@
 ---
 layout: default
-title: Home
+title: 首页
 ---
-<h2 class="post-list-heading">Posts</h2>
-
-<ul class="post-list">
-  {% for post in site.posts %}
-    <li class="post-list-li">
-      <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
-      <h3 class="post-list-h3">
-        <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title }}</a>
-      </h3>
+{% assign note_pages = site.pages | where: 'name', 'index.md' | where_exp: 'p', "p.dir contains 'notes/'" | sort_natural: 'title' %}
+<section class="home-hero" aria-labelledby="home-title">
+  <div>
+    <p class="eyebrow">LIZISEC / FIELD NOTES</p>
+    <h1 id="home-title">每一次探索，<br>都值得<span>记录。</span></h1>
+    <p class="hero-description">Hack The Box / VulnHub 靶机复盘与协议利用笔记。<br>把零散的线索，整理成可回溯的思路。</p>
+    <div class="hero-actions">
+      <a class="nes-btn button button-primary" href="{{ '/notes/' | relative_url }}">浏览靶机笔记 <span aria-hidden="true">→</span></a>
+      <a class="nes-btn button" href="{{ '/search/' | relative_url }}">搜索全文</a>
+    </div>
+  </div>
+  <dl class="home-stats">
+    <div><dt>靶机复盘</dt><dd>{{ note_pages.size }}<span>篇笔记</span></dd></div>
+    <div><dt>协议与技术</dt><dd>{{ site.posts.size }}<span>篇文章</span></dd></div>
+  </dl>
+</section>
+<section class="home-section" aria-labelledby="posts-title">
+  <div class="section-heading"><div><p class="eyebrow">PROTOCOLS & TECHNIQUES</p><h2 id="posts-title">协议与技术</h2></div><a href="{{ '/tags/' | relative_url }}">查看分类 →</a></div>
+  <ul class="post-list">
+    {% for post in site.posts %}
+    <li class="post-list-li nes-container is-dark">
+      <time class="post-meta" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y-%m-%d' }}</time>
+      <h3 class="post-list-h3"><a class="post-link" href="{{ post.url | relative_url }}">{{ post.title | escape }} <span aria-hidden="true">↗</span></a></h3>
+      <p class="post-details">{{ post.excerpt | strip_html | truncate: 120 | escape }}</p>
     </li>
-  {% endfor %}
-</ul>
+    {% else %}<li>文章正在整理中，先去看看靶机笔记吧。</li>{% endfor %}
+  </ul>
+</section>
+<section class="home-section" aria-labelledby="notes-title">
+  <div class="section-heading"><div><p class="eyebrow">LAB WRITE-UPS</p><h2 id="notes-title">靶机笔记</h2></div><a href="{{ '/notes/' | relative_url }}">查看全部 {{ note_pages.size }} 篇 →</a></div>
+  <div class="note-card-grid">
+    {% for p in note_pages limit: 6 %}{% include note-card.html note=p %}{% endfor %}
+  </div>
+</section>

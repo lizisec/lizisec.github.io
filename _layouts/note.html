@@ -2,19 +2,17 @@
 layout: default
 ---
 <div class="post-float-layout">
-  <nav class="toc-box js-toc" aria-label="Table of contents" hidden>
-    <p class="toc-title">On This Page</p>
-    <ul class="toc-list"></ul>
-  </nav>
-  <article class="post note-post">
+  {% include toc.html %}
+  <article class="post note-post nes-container is-dark">
     <header class="post-header">
-      <h1 class="post-title">{{ page.title | default: page.url }}</h1>
-      <p class="post-meta"><a href="{{ '/notes/' | relative_url }}">← Back to Notes</a></p>
+      <h1 class="post-title">{{ page.title | default: page.url | escape }}</h1>
+      <p class="post-meta"><a href="{{ '/notes/' | relative_url }}">← 全部靶机笔记</a></p>
       <p class="note-meta-line">
-        <span class="note-badge">{{ page.platform | default: "Unknown" }}</span>
-        <span class="note-badge">{{ page.os | default: "Unknown" }}</span>
-        <span class="note-badge">{{ page.difficulty | default: "Unknown" }}</span>
-        <span class="note-badge">{{ page.track | default: "Standalone" }}</span>
+        <span class="note-badge">{{ page.platform | default: "Unknown" | escape }}</span>
+        <span class="note-badge">{{ page.os | default: "Unknown" | escape }}</span>
+        <span class="note-badge">{{ page.difficulty | default: "Unknown" | escape }}</span>
+        <span class="note-badge">{{ page.track | default: "Standalone" | escape }}</span>
+        {% if page.status %}<span class="note-badge">{{ page.status | escape }}</span>{% endif %}
       </p>
     </header>
     <div class="post-content">

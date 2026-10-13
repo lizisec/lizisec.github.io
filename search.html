@@ -1,57 +1,23 @@
 ---
-layout: page
-title: Search
+layout: default
+title: 全文搜索
 permalink: /search/
 ---
-
-<section class="search-shell">
-  <label class="search-label" for="site-search-input">Search</label>
-  <input
-    id="site-search-input"
-    class="search-input"
-    type="search"
-    placeholder="搜索标题、正文、平台、系统、难度..."
-    autocomplete="off"
-    data-search-input
-  >
-  <p class="search-hint">支持中英文关键字，空格可组合条件。</p>
-  <p class="search-stats" data-search-stats>输入关键字开始搜索。</p>
+<p class="eyebrow">FIND A CLUE</p>
+<h1 class="page-title">全文搜索</h1>
+<p class="page-intro">搜索文章与靶机笔记的完整正文，也可以组合平台、系统和技术关键词。</p>
+<section class="search-shell" data-search-index="{{ '/search.json' | relative_url }}">
+  <form data-search-form role="search">
+    <label class="search-label" for="site-search-input">关键词</label>
+    <div class="search-controls">
+      <input id="site-search-input" class="search-input" name="q" type="search" placeholder="例如：HTB Windows Kerberos" autocomplete="off" aria-describedby="search-hint" data-search-input>
+      <label class="search-type" for="search-type">内容类型<select id="search-type" name="type" data-search-type><option value="">全部内容</option><option value="post">技术文章</option><option value="note">靶机笔记</option></select></label>
+      <button type="reset" class="nes-btn button">清空</button>
+    </div>
+  </form>
+  <p id="search-hint" class="search-hint">支持中英文，空格分隔的关键词需同时命中。搜索条件会保留在网址中，方便收藏。</p>
+  <p class="search-stats" data-search-stats role="status" aria-live="polite">正在加载搜索索引…</p>
+  <button type="button" class="nes-btn button" data-search-retry hidden>重新加载索引</button>
   <ul class="search-results" data-search-results></ul>
+  <noscript><p class="notice">全文搜索需要 JavaScript。你也可以<a href="{{ '/notes/' | relative_url }}">浏览全部笔记</a>或<a href="{{ '/tags/' | relative_url }}">查看分类</a>。</p></noscript>
 </section>
-
-{% assign note_pages = site.pages | where: "name", "index.md" | where_exp: "p", "p.dir contains 'notes/'" | sort: "title" %}
-<script id="site-search-data" type="application/json">
-[
-{% assign has_item = false %}
-{% for post in site.posts %}
-{% if has_item %},{% endif %}
-{
-  "type": "post",
-  "title": {{ post.title | jsonify }},
-  "url": {{ post.url | relative_url | jsonify }},
-  "date": {{ post.date | date: "%Y-%m-%d" | jsonify }},
-  "platform": "",
-  "os": "",
-  "difficulty": "",
-  "track": "",
-  "text": {{ post.content | strip_html | strip_newlines | replace: "\n", " " | truncate: 2000 | jsonify }}
-}
-{% assign has_item = true %}
-{% endfor %}
-{% for p in note_pages %}
-{% if has_item %},{% endif %}
-{
-  "type": "note",
-  "title": {{ p.title | default: p.url | jsonify }},
-  "url": {{ p.url | relative_url | jsonify }},
-  "date": "",
-  "platform": {{ p.platform | default: "" | jsonify }},
-  "os": {{ p.os | default: "" | jsonify }},
-  "difficulty": {{ p.difficulty | default: "" | jsonify }},
-  "track": {{ p.track | default: "" | jsonify }},
-  "text": {{ p.content | strip_html | strip_newlines | replace: "\n", " " | truncate: 2200 | jsonify }}
-}
-{% assign has_item = true %}
-{% endfor %}
-]
-</script>

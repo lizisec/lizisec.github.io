@@ -1,4 +1,5 @@
 title: lizisec notes
+lang: zh-CN
 description: HackTheBox / VulnHub 复盘与协议利用记录
 url: "https://lizisec.github.io"
 baseurl: ""
@@ -43,3 +44,12 @@ exclude:
   - .jekyll-metadata
   - src
   - backups
+  - vendor
+  - scripts
+  - tests
+  - package.json
+  - package-lock.json
+  - README.md
+  - MAINTENANCE.md
+  - Gemfile
+  - Gemfile.lock

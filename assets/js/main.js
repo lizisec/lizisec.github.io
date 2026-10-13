@@ -30,6 +30,7 @@
       }
     }
 
+    const previousFocus = document.activeElement;
     const textarea = document.createElement("textarea");
     textarea.value = text;
     textarea.setAttribute("readonly", "readonly");
@@ -46,292 +47,253 @@
     }
 
     document.body.removeChild(textarea);
+    if (previousFocus && previousFocus.focus) previousFocus.focus();
     return copied;
   };
 
-  const initSearch = () => {
-    const input = document.querySelector("[data-search-input]");
-    const resultList = document.querySelector("[data-search-results]");
-    const stats = document.querySelector("[data-search-stats]");
-    const dataNode = document.getElementById("site-search-data");
-
-    if (!input || !resultList || !stats || !dataNode) return;
-
-    let rawData = [];
-    try {
-      rawData = JSON.parse(dataNode.textContent || "[]");
-    } catch (_error) {
-      stats.textContent = "Search index failed to load.";
-      return;
-    }
-
-    const entries = rawData.map((item, index) => {
-      const title = String(item.title || "Untitled");
-      const metaFields = [item.platform, item.os, item.difficulty, item.track]
-        .map((v) => String(v || "").trim())
-        .filter(Boolean);
-
-      return {
-        id: index,
-        type: String(item.type || "post"),
-        title,
-        url: String(item.url || "#"),
-        date: String(item.date || ""),
-        metaFields,
-        titleIndex: normalize(title),
-        metaIndex: normalize(metaFields.join(" ")),
-        bodyIndex: normalize(item.text || ""),
-      };
+  const updateQuery = (values) => {
+    const url = new URL(window.location.href);
+    Object.entries(values).forEach(([key, value]) => {
+      if (value) url.searchParams.set(key, value);
+      else url.searchParams.delete(key);
     });
+    window.history.replaceState({}, "", url);
+  };
 
-    const formatMeta = (entry) => {
-      const chunks = [entry.type === "note" ? "NOTE" : "POST"];
+  const initSearch = () => {
+    const shell = document.querySelector("[data-search-index]");
+    if (!shell) return;
+    const input = shell.querySelector("[data-search-input]");
+    const type = shell.querySelector("[data-search-type]");
+    const form = shell.querySelector("form");
+    const results = shell.querySelector("[data-search-results]");
+    const stats = shell.querySelector("[data-search-stats]");
+    const retry = shell.querySelector("[data-search-retry]");
+    let entries = null;
+    let timer;
 
-      if (entry.date) chunks.push(entry.date);
-      if (entry.metaFields.length) chunks.push(entry.metaFields.join(" / "));
-
-      return chunks.join(" | ");
-    };
-
-    const render = (items, query) => {
-      resultList.innerHTML = "";
-
-      if (!query) {
-        stats.textContent = "Type to search posts and notes.";
-        return;
+    const highlight = (node, value, keywords) => {
+      // Construct text nodes rather than interpreting index/query text as HTML.
+      const lower = value.toLowerCase();
+      let position = 0;
+      while (position < value.length) {
+        let next = -1;
+        let length = 0;
+        keywords.forEach((keyword) => {
+          const match = lower.indexOf(keyword, position);
+          if (match >= 0 && (next < 0 || match < next || (match === next && keyword.length > length))) {
+            next = match;
+            length = keyword.length;
+          }
+        });
+        if (next < 0) { node.append(value.slice(position)); break; }
+        node.append(value.slice(position, next));
+        const mark = document.createElement("mark");
+        mark.textContent = value.slice(next, next + length);
+        node.append(mark);
+        position = next + length;
       }
-
-      if (!items.length) {
-        stats.textContent = "No results.";
-        return;
-      }
-
-      stats.textContent = `${items.length} result${items.length > 1 ? "s" : ""}.`;
-
-      const fragment = document.createDocumentFragment();
-      items.forEach((entry) => {
-        const li = document.createElement("li");
-        li.className = "search-result-item";
-
-        const link = document.createElement("a");
-        link.className = "search-result-title";
-        link.href = entry.url;
-        link.textContent = entry.title;
-
-        const meta = document.createElement("p");
-        meta.className = "search-result-meta";
-        meta.textContent = formatMeta(entry);
-
-        li.appendChild(link);
-        li.appendChild(meta);
-        fragment.appendChild(li);
-      });
-
-      resultList.appendChild(fragment);
     };
 
     const runSearch = () => {
-      const query = input.value;
-      const keywords = splitKeywords(query);
-
-      if (!keywords.length) {
-        render([], "");
+      if (!entries) return;
+      const keywords = splitKeywords(input.value);
+      results.replaceChildren();
+      if (!keywords.length && !type.value) {
+        stats.textContent = `已收录 ${entries.length} 篇内容。输入关键词开始搜索。`;
         return;
       }
-
-      const phrase = normalize(query);
-
-      const scored = entries
-        .filter((entry) => {
-          const haystack = `${entry.titleIndex} ${entry.metaIndex} ${entry.bodyIndex}`;
-          return keywords.every((token) => haystack.includes(token));
-        })
-        .map((entry) => {
-          let score = 0;
-          keywords.forEach((token) => {
-            if (entry.titleIndex.includes(token)) score += 10;
-            if (entry.metaIndex.includes(token)) score += 4;
-            if (entry.bodyIndex.includes(token)) score += 1;
-          });
-          if (phrase && entry.titleIndex.includes(phrase)) score += 8;
-
-          return { ...entry, score };
-        })
-        .sort((a, b) => {
-          if (b.score !== a.score) return b.score - a.score;
-          return b.date.localeCompare(a.date);
-        });
-
-      render(scored, query);
+      const matches = entries.filter((entry) =>
+        (!type.value || entry.type === type.value) && keywords.every((word) => entry.index.includes(word))
+      ).map((entry) => ({
+        ...entry,
+        score: keywords.reduce((total, word) => total +
+          (entry.titleIndex.includes(word) ? 10 : 0) + (entry.metaIndex.includes(word) ? 4 : 0), 0),
+      })).sort((a, b) => b.score - a.score || b.date.localeCompare(a.date) || a.title.localeCompare(b.title, "zh-CN"));
+      stats.textContent = matches.length ? `找到 ${matches.length} 篇相关内容。` : "没有找到相关内容。试试更短的关键词，或切换内容类型。";
+      const fragment = document.createDocumentFragment();
+      matches.forEach((entry) => {
+        const li = document.createElement("li");
+        li.className = "search-result-item nes-container is-dark";
+        const link = document.createElement("a");
+        link.className = "search-result-title";
+        link.href = entry.url;
+        highlight(link, entry.title, keywords);
+        const meta = document.createElement("p");
+        meta.className = "search-result-meta";
+        meta.textContent = [entry.type === "note" ? "靶机笔记" : "技术文章", entry.date, ...entry.meta].filter(Boolean).join(" · ");
+        const snippet = document.createElement("p");
+        snippet.className = "search-result-snippet";
+        const offsets = keywords.map((word) => entry.text.toLowerCase().indexOf(word)).filter((n) => n >= 0);
+        const start = Math.max(0, (offsets.length ? Math.min(...offsets) : 0) - 55);
+        const excerpt = (start ? "…" : "") + entry.text.slice(start, start + 200) + (entry.text.length > start + 200 ? "…" : "");
+        highlight(snippet, excerpt, keywords);
+        li.append(link, meta, snippet);
+        fragment.append(li);
+      });
+      results.append(fragment);
     };
-
-    const url = new URL(window.location.href);
-    const initialQ = url.searchParams.get("q") || "";
-    if (initialQ) {
-      input.value = initialQ;
-    }
-
-    input.addEventListener("input", () => {
-      const next = input.value.trim();
-      const nextUrl = new URL(window.location.href);
-      if (next) {
-        nextUrl.searchParams.set("q", next);
-      } else {
-        nextUrl.searchParams.delete("q");
-      }
-      window.history.replaceState({}, "", nextUrl);
+    const restore = () => {
+      const params = new URL(window.location.href).searchParams;
+      input.value = params.get("q") || "";
+      type.value = ["note", "post"].includes(params.get("type")) ? params.get("type") : "";
       runSearch();
+    };
+    const change = () => {
+      window.clearTimeout(timer);
+      updateQuery({ q: input.value.trim(), type: type.value });
+      runSearch();
+    };
+    input.addEventListener("input", () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(change, 120);
     });
+    type.addEventListener("change", change);
+    form.addEventListener("submit", (event) => { event.preventDefault(); change(); });
+    form.addEventListener("reset", (event) => {
+      event.preventDefault(); input.value = ""; type.value = ""; change(); input.focus();
+    });
+    window.addEventListener("popstate", () => { window.clearTimeout(timer); restore(); });
+    const loadIndex = async () => {
+      retry.hidden = true;
+      stats.textContent = "正在加载搜索索引…";
+      const controller = new AbortController();
+      const timeout = window.setTimeout(() => controller.abort(), 15000);
+      try {
+        const response = await fetch(shell.dataset.searchIndex, { signal: controller.signal });
+        if (!response.ok) throw new Error("Index unavailable");
+        const data = await response.json();
+        if (!Array.isArray(data)) throw new Error("Invalid index");
+        const decoder = document.createElement("textarea");
+        entries = data.map((item) => {
+          if (!item || typeof item.title !== "string" || typeof item.url !== "string") throw new Error("Invalid entry");
+          const url = new URL(item.url, window.location.href);
+          if (url.origin !== window.location.origin || !["http:", "https:"].includes(url.protocol)) throw new Error("Invalid entry URL");
+          decoder.innerHTML = String(item.text || "");
+          const text = decoder.value.replace(/\s+/g, " ").trim();
+          const meta = [item.platform, item.os, item.difficulty, item.track, item.status, ...(item.tags || [])].filter(Boolean);
+          return { ...item, url: url.href, date: item.date || "", text, meta,
+            titleIndex: normalize(item.title), metaIndex: normalize(meta.join(" ")),
+            index: normalize([item.title, ...meta, text].join(" ")) };
+        });
+        runSearch();
+      } catch (_error) {
+        entries = null;
+        stats.textContent = "搜索索引加载失败，请检查网络后重试。也可以从导航浏览笔记和分类。";
+        retry.hidden = false;
+      } finally { window.clearTimeout(timeout); }
+    };
+    retry.addEventListener("click", loadIndex);
+    restore();
+    loadIndex();
+  };
 
-    runSearch();
+  const initNoteFilters = () => {
+    const browser = document.querySelector("[data-note-browser]");
+    if (!browser) return;
+    const form = browser.querySelector("[data-note-filters]");
+    const cards = Array.from(browser.querySelectorAll("[data-note-card]"));
+    const count = browser.querySelector("[data-note-count]");
+    const empty = browser.querySelector("[data-note-empty]");
+    const fields = ["platform", "os", "difficulty", "track", "status"];
+    const difficultyOrder = ["Easy", "Medium", "Hard", "Insane", "Unknown"];
+    fields.forEach((field) => {
+      const values = Array.from(new Set(cards.map((card) => card.dataset[field])));
+      values.sort((a, b) => field === "difficulty" ?
+        (difficultyOrder.indexOf(a) < 0 ? 99 : difficultyOrder.indexOf(a)) - (difficultyOrder.indexOf(b) < 0 ? 99 : difficultyOrder.indexOf(b)) : a.localeCompare(b));
+      values.forEach((value) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = `${value} (${cards.filter((card) => card.dataset[field] === value).length})`;
+        form.elements[field].append(option);
+      });
+    });
+    const render = () => {
+      const keywords = splitKeywords(form.elements.q.value);
+      let visible = 0;
+      cards.forEach((card) => {
+        const matches = keywords.every((word) => normalize(card.dataset.title).includes(word)) &&
+          fields.every((field) => !form.elements[field].value || card.dataset[field] === form.elements[field].value);
+        card.hidden = !matches;
+        if (matches) visible += 1;
+      });
+      count.textContent = `显示 ${visible} / ${cards.length} 篇笔记`;
+      empty.hidden = visible > 0;
+    };
+    const restore = () => {
+      const params = new URL(window.location.href).searchParams;
+      form.elements.q.value = params.get("q") || "";
+      fields.forEach((field) => {
+        const requested = params.get(field) || "";
+        const select = form.elements[field];
+        select.value = Array.from(select.options).some((option) => option.value === requested) ? requested : "";
+      });
+      render();
+    };
+    const change = () => {
+      updateQuery(Object.fromEntries([...fields, "q"].map((field) => [field, form.elements[field].value.trim()])));
+      render();
+    };
+    form.addEventListener("input", change);
+    form.addEventListener("change", change);
+    form.addEventListener("submit", (event) => { event.preventDefault(); change(); });
+    form.addEventListener("reset", (event) => {
+      event.preventDefault();
+      [...fields, "q"].forEach((field) => { form.elements[field].value = ""; });
+      change();
+    });
+    window.addEventListener("popstate", restore);
+    form.hidden = false;
+    restore();
   };
 
   const initToc = () => {
-    const tocBox = document.querySelector(".js-toc");
-    const tocList = tocBox ? tocBox.querySelector(".toc-list") : null;
+    const toc = document.querySelector(".js-toc");
     const content = document.querySelector(".post-content");
-    const layout = tocBox ? tocBox.closest(".post-float-layout") : null;
-
-    if (!tocBox || !tocList || !content) return;
-
-    const allHeadings = Array.from(content.querySelectorAll("h1, h2, h3, h4"));
-    if (!allHeadings.length) {
-      tocBox.hidden = true;
-      if (layout) layout.classList.remove("has-toc");
-      return;
-    }
-
-    const levels = Array.from(
-      new Set(
-        allHeadings
-          .map((heading) => Number(heading.tagName.replace("H", "")))
-          .filter((level) => Number.isFinite(level))
-      )
-    ).sort((a, b) => a - b);
-
-    const primaryLevel = levels[0];
-    const secondaryLevel = levels[1] || null;
-    const headings = allHeadings.filter((heading) => {
-      const level = Number(heading.tagName.replace("H", ""));
-      return level === primaryLevel || (secondaryLevel && level === secondaryLevel);
-    });
-
-    if (!headings.length) {
-      tocBox.hidden = true;
-      if (layout) layout.classList.remove("has-toc");
-      return;
-    }
-
-    const usedIds = new Set(
-      headings
-        .map((h) => String(h.id || "").trim())
-        .filter(Boolean)
-    );
-
-    const slugify = (text) => {
-      const slug = String(text || "")
-        .toLowerCase()
-        .trim()
-        .replace(/[^\w\u4e00-\u9fff\s-]/g, "")
-        .replace(/\s+/g, "-")
-        .replace(/-+/g, "-");
-
-      return slug || "section";
-    };
-
-    const makeUniqueId = (base) => {
-      let candidate = base;
-      let index = 2;
-      while (usedIds.has(candidate) || document.getElementById(candidate)) {
-        candidate = `${base}-${index}`;
-        index += 1;
-      }
-      usedIds.add(candidate);
-      return candidate;
-    };
-
-    const linkMap = new Map();
-    const fragment = document.createDocumentFragment();
-    let currentPrimaryItem = null;
-    let currentPrimaryId = "";
-
-    headings.forEach((heading, idx) => {
+    if (!toc || !content) return;
+    const headings = Array.from(content.querySelectorAll("h1, h2, h3, h4"));
+    if (!headings.length) return;
+    const list = toc.querySelector(".toc-list");
+    const minimum = Math.min(...headings.map((heading) => Number(heading.tagName.slice(1))));
+    const links = new Map();
+    headings.forEach((heading, index) => {
       if (!heading.id) {
-        const base = slugify(heading.textContent) || `section-${idx + 1}`;
-        heading.id = makeUniqueId(base);
+        let id = `section-${index + 1}`;
+        while (document.getElementById(id)) id += "-section";
+        heading.id = id;
       }
-
-      const level = Number(heading.tagName.replace("H", ""));
-      const isPrimary = level === primaryLevel || !secondaryLevel;
-      const li = document.createElement("li");
-      li.className = `toc-item ${isPrimary ? "toc-level-1" : "toc-level-2"}`;
-
+      const item = document.createElement("li");
+      item.className = "toc-item";
+      item.style.setProperty("--toc-depth", Number(heading.tagName.slice(1)) - minimum);
       const link = document.createElement("a");
-      link.href = `#${heading.id}`;
-      link.textContent = heading.textContent || `Section ${idx + 1}`;
-
-      li.appendChild(link);
-
-      if (isPrimary || !currentPrimaryItem) {
-        fragment.appendChild(li);
-        currentPrimaryItem = li;
-        currentPrimaryId = heading.id;
-      } else {
-        let sublist = currentPrimaryItem.querySelector(".toc-sublist");
-        if (!sublist) {
-          sublist = document.createElement("ul");
-          sublist.className = "toc-sublist";
-          currentPrimaryItem.appendChild(sublist);
-        }
-        sublist.appendChild(li);
-        link.dataset.parentId = currentPrimaryId;
-      }
-
-      linkMap.set(heading.id, link);
+      link.href = `#${encodeURIComponent(heading.id)}`;
+      link.textContent = heading.textContent;
+      item.append(link); list.append(item); links.set(heading, link);
     });
-
-    tocList.innerHTML = "";
-    tocList.appendChild(fragment);
-    tocBox.hidden = false;
-    if (layout) layout.classList.add("has-toc");
-
-    const setActive = (activeId) => {
-      linkMap.forEach((link) => link.classList.remove("active", "active-parent"));
-
-      const activeLink = linkMap.get(activeId);
-      if (!activeLink) return;
-
-      activeLink.classList.add("active");
-      const parentId = activeLink.dataset.parentId;
-      if (parentId) {
-        const parentLink = linkMap.get(parentId);
-        if (parentLink) parentLink.classList.add("active-parent");
+    toc.hidden = false;
+    toc.closest(".post-float-layout").classList.add("has-toc");
+    const desktop = window.matchMedia("(min-width: 981px)");
+    const setLayout = () => { toc.open = desktop.matches; };
+    setLayout();
+    desktop.addEventListener("change", setLayout);
+    const update = () => {
+      let current = headings[0];
+      for (const heading of headings) {
+        if (heading.getBoundingClientRect().top <= 150) current = heading;
       }
-    };
-
-    const updateActiveByScroll = () => {
-      const marker = window.innerHeight * 0.24;
-      let currentHeading = headings[0];
-
-      headings.forEach((heading) => {
-        if (heading.getBoundingClientRect().top <= marker) {
-          currentHeading = heading;
-        }
+      links.forEach((link, heading) => {
+        const active = heading === current;
+        link.classList.toggle("active", active);
+        if (active) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
       });
-
-      if (currentHeading) setActive(currentHeading.id);
     };
-
     let scheduled = false;
     const requestUpdate = () => {
       if (scheduled) return;
       scheduled = true;
-      window.requestAnimationFrame(() => {
-        updateActiveByScroll();
-        scheduled = false;
-      });
+      window.requestAnimationFrame(() => { update(); scheduled = false; });
     };
-
     document.addEventListener("scroll", requestUpdate, { passive: true });
     window.addEventListener("resize", requestUpdate);
     requestUpdate();
@@ -342,7 +304,7 @@
     if (!blocks.length) return;
 
     blocks.forEach((pre) => {
-      if (pre.querySelector(".code-copy-btn")) return;
+      if (pre.closest(".code-block")) return;
 
       const source = pre.querySelector("code") || pre;
       const value = (source.innerText || source.textContent || "").trim();
@@ -352,103 +314,97 @@
       button.type = "button";
       button.className = "code-copy-btn";
       button.innerHTML = COPY_ICON_SVG;
-      button.setAttribute("aria-label", "Copy code to clipboard");
-      button.setAttribute("title", "Copy");
+      button.setAttribute("aria-label", "复制代码");
+      button.setAttribute("title", "复制代码");
 
+      const wrapper = document.createElement("div");
+      wrapper.className = "code-block";
+      pre.before(wrapper);
+      wrapper.append(pre);
+      pre.tabIndex = 0;
+      const status = document.createElement("span");
+      status.className = "sr-only";
+      status.setAttribute("role", "status");
+      wrapper.append(status);
       let timerId;
       button.addEventListener("click", async () => {
-        const raw = (source.innerText || source.textContent || "").replace(/\n$/, "");
+        const raw = (source.textContent || "").replace(/\n$/, "");
         const ok = await copyText(raw);
 
         button.classList.toggle("is-success", ok);
         button.classList.toggle("is-failed", !ok);
-        button.setAttribute("title", ok ? "Copied" : "Copy failed");
+        button.setAttribute("title", ok ? "已复制" : "复制失败，请手动选择代码");
+        status.textContent = ok ? "代码已复制" : "复制失败，请手动选择代码";
 
         window.clearTimeout(timerId);
         timerId = window.setTimeout(() => {
           button.classList.remove("is-success", "is-failed");
-          button.setAttribute("title", "Copy");
+          status.textContent = "";
+          button.setAttribute("title", "复制代码");
         }, 1400);
       });
 
-      pre.appendChild(button);
+      wrapper.appendChild(button);
     });
   };
 
   const initImageUx = () => {
-    const content = document.querySelector(".post-content");
-    if (!content) return;
-
-    const images = Array.from(content.querySelectorAll("img"));
-    if (!images.length) return;
-
-    let lightbox;
-    let lightboxImg;
-    let lightboxCaption;
-
-    const closeLightbox = () => {
-      if (!lightbox) return;
-      lightbox.classList.remove("is-open");
-      lightbox.setAttribute("aria-hidden", "true");
-      document.body.classList.remove("img-lightbox-open");
-      if (lightboxImg) lightboxImg.src = "";
-      if (lightboxCaption) lightboxCaption.textContent = "";
-    };
-
-    const ensureLightbox = () => {
-      if (lightbox) return;
-
-      lightbox = document.createElement("div");
-      lightbox.className = "img-lightbox";
-      lightbox.setAttribute("aria-hidden", "true");
-
-      const closeBtn = document.createElement("button");
-      closeBtn.type = "button";
-      closeBtn.className = "img-lightbox-close";
-      closeBtn.textContent = "Close";
-      closeBtn.setAttribute("aria-label", "Close image preview");
-
-      lightboxImg = document.createElement("img");
-      lightboxImg.className = "img-lightbox-content";
-      lightboxImg.alt = "Image preview";
-
-      lightboxCaption = document.createElement("p");
-      lightboxCaption.className = "img-lightbox-caption";
-
-      closeBtn.addEventListener("click", closeLightbox);
-      lightbox.addEventListener("click", (event) => {
-        if (event.target === lightbox) closeLightbox();
-      });
-
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") closeLightbox();
-      });
-
-      lightbox.appendChild(closeBtn);
-      lightbox.appendChild(lightboxImg);
-      lightbox.appendChild(lightboxCaption);
-      document.body.appendChild(lightbox);
-    };
-
-    const openLightbox = (img) => {
-      ensureLightbox();
-      lightboxImg.src = img.currentSrc || img.src;
-      lightboxImg.alt = img.alt || "Image preview";
-      lightboxCaption.textContent = img.alt || "";
-      lightbox.classList.add("is-open");
-      lightbox.setAttribute("aria-hidden", "false");
+    const images = document.querySelectorAll(".post-content img");
+    let dialog;
+    let preview;
+    let caption;
+    const open = (image) => {
+      if (!dialog) {
+        dialog = document.createElement("dialog");
+        dialog.className = "img-lightbox";
+        dialog.setAttribute("aria-label", "图片预览");
+        const close = document.createElement("button");
+        close.type = "button";
+        close.className = "img-lightbox-close";
+        close.textContent = "关闭 ✕";
+        close.autofocus = true;
+        close.addEventListener("click", () => dialog.close());
+        preview = document.createElement("img");
+        preview.className = "img-lightbox-content";
+        caption = document.createElement("p");
+        caption.className = "img-lightbox-caption";
+        dialog.append(close, preview, caption);
+        dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+        dialog.addEventListener("close", () => {
+          document.body.classList.remove("img-lightbox-open");
+          preview.removeAttribute("src");
+        });
+        document.body.append(dialog);
+      }
+      preview.src = image.currentSrc || image.src;
+      preview.alt = image.alt || "笔记截图";
+      caption.textContent = image.alt || "按 Esc 或点击关闭返回阅读";
+      dialog.showModal();
       document.body.classList.add("img-lightbox-open");
     };
-
-    images.forEach((img) => {
-      if (!img.getAttribute("loading")) img.setAttribute("loading", "lazy");
-      if (!img.getAttribute("decoding")) img.setAttribute("decoding", "async");
-      img.classList.add("zoomable-image");
-
-      img.addEventListener("click", (event) => {
-        event.preventDefault();
-        openLightbox(img);
-      });
+    images.forEach((image) => {
+      image.loading = "lazy";
+      image.decoding = "async";
+      // Preserve an author's explicit image link, rather than swallowing it.
+      if (!image.closest("a") && typeof HTMLDialogElement !== "undefined" && HTMLDialogElement.prototype.showModal) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "image-zoom-button";
+        button.setAttribute("aria-label", `放大图片：${image.alt || "笔记截图"}`);
+        image.before(button); button.append(image);
+        button.addEventListener("click", () => open(image));
+      }
+      const onError = () => {
+        if (image.dataset.failed) return;
+        image.dataset.failed = "true";
+        const message = document.createElement("span");
+        message.className = "image-error";
+        message.textContent = `图片加载失败：${image.alt || "笔记截图"}`;
+        image.after(message);
+        if (image.parentElement.classList.contains("image-zoom-button")) image.parentElement.disabled = true;
+      };
+      image.addEventListener("error", onError, { once: true });
+      if (image.complete && image.naturalWidth === 0) onError();
     });
   };
 
@@ -517,7 +473,7 @@
       widget.classList.remove("is-hop");
       void widget.offsetWidth;
       widget.classList.add("is-hop");
-      showMessage(pick(chatter));
+      showMessage(Math.random() < 0.3 ? pageHint : pick(chatter));
     });
 
     bodyBtn.addEventListener("mouseenter", () => {
@@ -536,18 +492,12 @@
       event.stopPropagation();
     });
 
-    window.setTimeout(() => {
-      showMessage(pageHint, 3600);
-    }, 900);
 
-    window.setInterval(() => {
-      if (document.hidden || !bubble.hidden) return;
-      if (Math.random() < 0.48) showMessage(pick(chatter), 2800);
-    }, 22000);
   };
 
   onReady(() => {
     initSearch();
+    initNoteFilters();
     initToc();
     initCodeCopy();
     initImageUx();

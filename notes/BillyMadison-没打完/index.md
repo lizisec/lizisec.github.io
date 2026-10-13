@@ -4,6 +4,7 @@ platform: VulnHub
 os: Linux
 difficulty: Unknown
 track: Standalone
+status: WIP
 ---
 靶机下载地址：https://www.vulnhub.com/entry/billy-madison-11,161/
 

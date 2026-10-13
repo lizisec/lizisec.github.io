@@ -1,0 +1,29 @@
+---
+layout: default
+title: 分类索引
+permalink: /tags/
+---
+{% assign note_pages = site.pages | where: 'name', 'index.md' | where_exp: 'p', "p.dir contains 'notes/'" %}
+<p class="eyebrow">EXPLORE BY TOPIC</p>
+<h1 class="page-title">分类索引</h1>
+<p class="page-intro">按技术主题阅读文章，或从不同维度浏览靶机。</p>
+<section class="home-section">
+  <h2>文章标签</h2>
+  {% assign tag_groups = site.tags | sort %}
+  {% for tag in tag_groups %}
+    <section class="taxonomy-group"><h3>{{ tag[0] | escape }} <span class="count">{{ tag[1].size }}</span></h3><ul>{% for post in tag[1] %}<li><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></li>{% endfor %}</ul></section>
+  {% else %}<p>暂无标签，<a href="{{ '/' | relative_url }}">返回首页查看文章</a>。</p>{% endfor %}
+</section>
+<section class="home-section">
+  <h2>靶机分类</h2>
+  {% assign facets = 'platform,os,difficulty,track' | split: ',' %}
+  {% assign labels = '平台,系统,难度,方向' | split: ',' %}
+  {% for facet in facets %}
+    <details class="taxonomy-group" open><summary>{{ labels[forloop.index0] }}</summary>
+      <div class="taxonomy-grid">{% assign groups = note_pages | group_by: facet | sort: 'name' %}{% for group in groups %}
+        <div><h3><a href="{{ '/notes/' | relative_url }}?{{ facet }}={{ group.name | url_encode }}">{{ group.name | escape }}</a> <span class="count">{{ group.size }}</span></h3>
+          <ul>{% for p in group.items %}<li><a href="{{ p.url | relative_url }}">{{ p.title | escape }}</a></li>{% endfor %}</ul>
+        </div>{% endfor %}</div>
+    </details>
+  {% endfor %}
+</section>

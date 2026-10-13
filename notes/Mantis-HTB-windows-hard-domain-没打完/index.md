@@ -4,6 +4,7 @@ platform: HTB
 os: Windows
 difficulty: Hard
 track: Domain
+status: WIP
 ---
 ## 信息收集
 
